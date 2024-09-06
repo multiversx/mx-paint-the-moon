@@ -1,0 +1,89 @@
+{
+    "buildInfo": {
+        "rustc": {
+            "version": "1.80.1",
+            "commitHash": "3f5fd8dd41153bc5fdca9427e9e05be2c767ba23",
+            "commitDate": "2024-08-06",
+            "channel": "Stable",
+            "short": "rustc 1.80.1 (3f5fd8dd4 2024-08-06)"
+        },
+        "contractCrate": {
+            "name": "paint-the-moon-sc",
+            "version": "0.0.0"
+        },
+        "framework": {
+            "name": "multiversx-sc",
+            "version": "0.52.3"
+        }
+    },
+    "docs": [
+        "An empty contract. To be used as a template when starting a new contract from scratch."
+    ],
+    "name": "PaintTheMoonSc",
+    "constructor": {
+        "inputs": [],
+        "outputs": []
+    },
+    "upgradeConstructor": {
+        "inputs": [],
+        "outputs": []
+    },
+    "endpoints": [
+        {
+            "name": "paint",
+            "mutability": "mutable",
+            "payableInTokens": [
+                "*"
+            ],
+            "inputs": [
+                {
+                    "name": "point",
+                    "type": "u8"
+                },
+                {
+                    "name": "new_color",
+                    "type": "Color"
+                }
+            ],
+            "outputs": []
+        }
+    ],
+    "events": [
+        {
+            "identifier": "",
+            "inputs": [
+                {
+                    "name": "point",
+                    "type": "u8",
+                    "indexed": true
+                },
+                {
+                    "name": "new_color",
+                    "type": "Color",
+                    "indexed": true
+                }
+            ]
+        }
+    ],
+    "esdtAttributes": [],
+    "hasCallback": false,
+    "types": {
+        "Color": {
+            "type": "enum",
+            "variants": [
+                {
+                    "name": "Black",
+                    "discriminant": 1
+                },
+                {
+                    "name": "Blue",
+                    "discriminant": 2
+                },
+                {
+                    "name": "Red",
+                    "discriminant": 3
+                }
+            ]
+        }
+    }
+}

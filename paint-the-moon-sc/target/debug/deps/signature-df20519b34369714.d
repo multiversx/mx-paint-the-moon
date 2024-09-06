@@ -1,0 +1,11 @@
+/Users/calin/Documents/work/MultiversX/paint-the-moon-sc/target/debug/deps/libsignature-df20519b34369714.rmeta: /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/lib.rs /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/error.rs /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/keypair.rs /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/signature.rs /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/signer.rs /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/verifier.rs /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/../README.md
+
+/Users/calin/Documents/work/MultiversX/paint-the-moon-sc/target/debug/deps/signature-df20519b34369714.d: /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/lib.rs /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/error.rs /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/keypair.rs /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/signature.rs /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/signer.rs /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/verifier.rs /Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/../README.md
+
+/Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/lib.rs:
+/Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/error.rs:
+/Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/keypair.rs:
+/Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/signature.rs:
+/Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/signer.rs:
+/Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/verifier.rs:
+/Users/calin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/signature-1.6.4/src/../README.md:

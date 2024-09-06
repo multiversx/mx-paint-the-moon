@@ -1,0 +1,19 @@
+[
+  "bigIntCmp",
+  "bigIntSetInt64",
+  "checkNoPayment",
+  "getArgumentLength",
+  "getNumArguments",
+  "mBufferAppendBytes",
+  "mBufferEq",
+  "mBufferGetByteSlice",
+  "mBufferGetLength",
+  "mBufferSetBytes",
+  "mBufferStorageLoad",
+  "mBufferStorageStore",
+  "managedGetMultiESDTCallValue",
+  "managedSignalError",
+  "managedWriteLog",
+  "signalError",
+  "smallIntGetUnsignedArgument"
+]

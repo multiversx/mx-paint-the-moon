@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "paint-harvest-sc",
+    "paint-harvest-sc/meta",
+
+    "paint-the-moon-sc",
+    "paint-the-moon-sc/meta",
+]
