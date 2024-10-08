@@ -8,17 +8,8 @@ publish = false
 [lib]
 path = "src/paint_the_moon_sc.rs"
 
-[dependencies.multiversx-sc]
-version = "0.53.0"
-
-[dev-dependencies]
+[dependencies]
 num-bigint = "0.4"
-
-[dev-dependencies.multiversx-sc-scenario]
-version = "0.53.0"
-
-# [workspace]
-# members = [
-#     ".",
-#     "meta",
-# ]
+multiversx-sc = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "2d18801187a5ea89949647f07553ed80e695dab5" }
+multiversx-sc-scenario = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "2d18801187a5ea89949647f07553ed80e695dab5" }
+common = { path = "../common" }

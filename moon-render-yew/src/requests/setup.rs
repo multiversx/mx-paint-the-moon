@@ -1,5 +1,5 @@
-use super::paint_the_moon_proxy::Point;
 use crate::interactor::ContractInteract;
+use common::Point;
 use multiversx_sc_snippets_dapp::imports::Bech32Address;
 
 pub async fn deploy_paint_the_moon() -> Result<Bech32Address, String> {

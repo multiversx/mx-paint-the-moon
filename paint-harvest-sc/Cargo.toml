@@ -8,11 +8,8 @@ publish = false
 [lib]
 path = "src/paint_harvest_sc.rs"
 
-[dependencies.multiversx-sc]
-version = "0.53.0"
-
-[dev-dependencies]
+[dependencies]
+multiversx-sc = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "2d18801187a5ea89949647f07553ed80e695dab5" }
+multiversx-sc-scenario = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "2d18801187a5ea89949647f07553ed80e695dab5" }
 num-bigint = "0.4"
-
-[dev-dependencies.multiversx-sc-scenario]
-version = "0.53.0"
+common = { path = "../common" }

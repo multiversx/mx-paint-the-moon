@@ -7,4 +7,6 @@ members = [
     "paint-the-moon-sc/meta",
 
     "moon-render-yew",
+
+    "common",
 ]

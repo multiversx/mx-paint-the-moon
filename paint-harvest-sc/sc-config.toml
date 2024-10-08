@@ -1,0 +1,2 @@
+[[proxy]]
+path = "../comon/src/proxies/paint_harvest_proxy.rs"

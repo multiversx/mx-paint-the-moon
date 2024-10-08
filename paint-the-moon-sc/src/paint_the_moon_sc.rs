@@ -1,22 +1,18 @@
 #![no_std]
-use data::{Color, Point};
-#[allow(unused_imports)]
+use common::{decode_coordinates, Color, Point, MAX_HEIGHT, MAX_WIDTH};
 use multiversx_sc::imports::*;
-
-mod data;
-
-const MAX_HEIGHT: u32 = 500;
-const MAX_WIDTH: u32 = 500;
 
 /// A very light contract containing the map points and their state.
 #[multiversx_sc::contract]
 pub trait PaintTheMoonSc {
+    // endpoints
     #[init]
     fn init(&self) {}
 
     #[upgrade]
     fn upgrade(&self) {}
 
+    /// Endpoint used to change the state (color) of a point.
     #[payable("*")]
     #[endpoint]
     fn paint(&self, point: u64, new_color: Color) {
@@ -31,8 +27,11 @@ pub trait PaintTheMoonSc {
         );
 
         // decode point into X, Y, check that both are under height and width
-        let (x, y) = decode_point(point);
-        require!(x <= MAX_WIDTH && y <= MAX_HEIGHT, "wrong point coordinates");
+        let (x, y) = decode_coordinates(point);
+        require!(
+            x <= MAX_WIDTH && y <= MAX_HEIGHT,
+            "wrong point coordinates (key)"
+        );
 
         if &new_color == &Color::White {
             self.color(point).clear();
@@ -45,20 +44,41 @@ pub trait PaintTheMoonSc {
         self.splash(point, &new_color);
     }
 
-    #[event]
-    fn splash(&self, #[indexed] point: u64, #[indexed] new_color: &Color);
+    // owner endpoints
+    /// Endpoint used initially to set up the current stage of the map.
+    /// We use a mercator representation of the moon for the initial setup, so the actual moon layout will be passed here.
+    #[only_owner]
+    #[endpoint]
+    fn initial_map_setup(&self, points: ManagedVec<Point>) {
+        for point in points.iter() {
+            self.all_points().insert(point.coordinates);
+            self.color(point.coordinates).set(point.color);
+        }
+    }
 
+    // storage
+    /// Stores the state (color) of a point.
+    /// The key is formed by encoding X and Y into an u64.
     #[storage_mapper("color")]
     fn color(&self, point: u64) -> SingleValueMapper<Color>;
 
+    /// We only store the keys that hold information (color). We assume the rest of the points are white.
+    /// The key is formed by encoding X and Y into an u64.
+    /// Painting in white removes the key from the mapper.
     #[storage_mapper("allPoints")]
     fn all_points(&self) -> UnorderedSetMapper<u64>;
 
+    /// The TokenIdentifier associated with the Paint ESDT.
     #[storage_mapper("paintId")]
     fn paint_id(&self, color: &Color) -> SingleValueMapper<TokenIdentifier>;
 
-    // TODO: find a way to store the points. We will receive a 2D projection of a 3D space.
-    // Maybe it would be a good idea to not store them per se, but only their state.
+    // events
+    /// Announces the succesful painting of a point.
+    #[event]
+    fn splash(&self, #[indexed] point: u64, #[indexed] new_color: &Color);
+
+    // views
+    /// Iterates through all available keys and fetches the current state (color).
     #[view(getAllPoints)]
     fn get_all_points(&self) -> ManagedVec<Point> {
         let mut vec = ManagedVec::new();
@@ -70,19 +90,4 @@ pub trait PaintTheMoonSc {
         }
         vec
     }
-
-    #[only_owner]
-    #[endpoint]
-    fn initial_map_setup(&self, points: ManagedVec<Point>) {
-        for point in points.iter() {
-            self.all_points().insert(point.coordinates);
-            self.color(point.coordinates).set(point.color);
-        }
-    }
-}
-
-fn decode_point(encoded: u64) -> (u32, u32) {
-    let x = (encoded >> 32) as u32; // Upper 32 bits
-    let y = (encoded & 0xFFFFFFFF) as u32; // Lower 32 bits
-    (x, y)
 }

@@ -24,11 +24,6 @@ overflow-checks = false
 [profile.dev]
 panic = "abort"
 
-[dependencies.paint-the-moon-sc]
-path = ".."
-
-[dependencies.multiversx-sc-wasm-adapter]
-version = "0.53.0"
-
-[workspace]
-members = ["."]
+[dependencies]
+paint-the-moon-sc = { path = ".." }
+multiversx-sc-wasm-adapter = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "2d18801187a5ea89949647f07553ed80e695dab5" }

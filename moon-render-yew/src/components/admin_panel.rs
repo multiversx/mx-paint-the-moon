@@ -1,9 +1,10 @@
+use common::Color;
 use yew::prelude::*;
 
 use crate::{
     components::Button,
     context::ConfigContext,
-    requests::{paint_the_moon_proxy::Color, setup, transaction},
+    requests::{setup, transaction},
 };
 
 #[function_component(AdminPanel)]

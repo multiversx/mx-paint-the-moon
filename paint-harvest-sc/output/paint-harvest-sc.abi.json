@@ -13,23 +13,284 @@
         },
         "framework": {
             "name": "multiversx-sc",
-            "version": "0.52.3"
+            "version": "0.53.0"
         }
     },
     "docs": [
-        "An empty contract. To be used as a template when starting a new contract from scratch."
+        "Paint harvesting contract used for receiving paint once in a while."
     ],
     "name": "PaintHarvestSc",
     "constructor": {
-        "inputs": [],
+        "inputs": [
+            {
+                "name": "collection_token_id",
+                "type": "TokenIdentifier"
+            },
+            {
+                "name": "is_open",
+                "type": "bool"
+            }
+        ],
         "outputs": []
     },
     "upgradeConstructor": {
         "inputs": [],
         "outputs": []
     },
-    "endpoints": [],
+    "endpoints": [
+        {
+            "name": "start_harvest",
+            "mutability": "mutable",
+            "payableInTokens": [
+                "*"
+            ],
+            "inputs": [
+                {
+                    "name": "color",
+                    "type": "Color"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "claim_harvest",
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "change_harvest_color",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "new_color",
+                    "type": "Color"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "stop_harvest",
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "open_contract",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "close_contract",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "change_color_harvest_duration",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "color",
+                    "type": "Color"
+                },
+                {
+                    "name": "new_duration",
+                    "type": "u64"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "docs": [
+                "issue - color as SFT"
+            ],
+            "name": "issue_semi_fungible",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "payableInTokens": [
+                "EGLD"
+            ],
+            "inputs": [
+                {
+                    "name": "token_display_name",
+                    "type": "bytes"
+                },
+                {
+                    "name": "token_ticker",
+                    "type": "bytes"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "set_special_roles",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "create_sft",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "color",
+                    "type": "bytes"
+                },
+                {
+                    "name": "attributes",
+                    "type": "bytes"
+                },
+                {
+                    "name": "uris",
+                    "type": "List<bytes>"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "add_quantity",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "color_nonce",
+                    "type": "u64"
+                },
+                {
+                    "name": "amount",
+                    "type": "BigUint"
+                }
+            ],
+            "outputs": []
+        }
+    ],
+    "events": [
+        {
+            "identifier": "",
+            "inputs": [
+                {
+                    "name": "user",
+                    "type": "Address",
+                    "indexed": true
+                },
+                {
+                    "name": "new_color",
+                    "type": "Color",
+                    "indexed": true
+                }
+            ]
+        },
+        {
+            "identifier": "",
+            "inputs": [
+                {
+                    "name": "user",
+                    "type": "Address",
+                    "indexed": true
+                },
+                {
+                    "name": "color",
+                    "type": "Color",
+                    "indexed": true
+                },
+                {
+                    "name": "amount",
+                    "type": "BigUint"
+                }
+            ]
+        },
+        {
+            "identifier": "",
+            "inputs": [
+                {
+                    "name": "user",
+                    "type": "Address",
+                    "indexed": true
+                },
+                {
+                    "name": "nft_nonce",
+                    "type": "u64",
+                    "indexed": true
+                },
+                {
+                    "name": "start_timestamp",
+                    "type": "u64",
+                    "indexed": true
+                },
+                {
+                    "name": "starting_color",
+                    "type": "Color",
+                    "indexed": true
+                }
+            ]
+        },
+        {
+            "identifier": "",
+            "inputs": [
+                {
+                    "name": "user",
+                    "type": "Address",
+                    "indexed": true
+                },
+                {
+                    "name": "nft_nonce",
+                    "type": "u64",
+                    "indexed": true
+                },
+                {
+                    "name": "end_timestamp",
+                    "type": "u64",
+                    "indexed": true
+                }
+            ]
+        }
+    ],
     "esdtAttributes": [],
-    "hasCallback": false,
-    "types": {}
+    "hasCallback": true,
+    "types": {
+        "Color": {
+            "type": "enum",
+            "variants": [
+                {
+                    "name": "White",
+                    "discriminant": 0
+                },
+                {
+                    "name": "Black",
+                    "discriminant": 1
+                },
+                {
+                    "name": "Blue",
+                    "discriminant": 2
+                },
+                {
+                    "name": "Red",
+                    "discriminant": 3
+                },
+                {
+                    "name": "Yellow",
+                    "discriminant": 4
+                },
+                {
+                    "name": "Green",
+                    "discriminant": 5
+                },
+                {
+                    "name": "Purple",
+                    "discriminant": 6
+                },
+                {
+                    "name": "Grey",
+                    "discriminant": 7
+                }
+            ]
+        }
+    }
 }

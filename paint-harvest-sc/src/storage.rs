@@ -1,6 +1,5 @@
+use common::{Color, UserInfo};
 use multiversx_sc::imports::*;
-
-use crate::data::{Color, UserInfo};
 
 #[multiversx_sc::module]
 pub trait StorageModule {

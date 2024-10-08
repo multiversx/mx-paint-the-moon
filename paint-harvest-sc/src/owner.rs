@@ -1,9 +1,6 @@
+use crate::custom_callbacks::{CallbackProxy, CustomCallbacks};
+use common::{Color, ISSUE_COST};
 use multiversx_sc::imports::*;
-
-use crate::{
-    custom_callbacks::{CallbackProxy, CustomCallbacks},
-    data::{Color, ISSUE_COST},
-};
 
 #[multiversx_sc::module]
 pub trait OwnerModule:

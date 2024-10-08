@@ -1,4 +1,5 @@
-use crate::requests::{paint_the_moon_proxy::Point, query};
+use crate::requests::query;
+use common::Point;
 use html::ChildrenProps;
 use yew::prelude::*;
 

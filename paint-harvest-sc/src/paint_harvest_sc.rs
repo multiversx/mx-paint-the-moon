@@ -1,9 +1,8 @@
 #![no_std]
-use data::{Color, UserInfo};
+use common::{Color, UserInfo};
 use multiversx_sc::imports::*;
 
 mod custom_callbacks;
-mod data;
 mod events;
 mod owner;
 mod private;
