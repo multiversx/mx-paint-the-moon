@@ -23,10 +23,6 @@ pub trait StorageModule {
     #[storage_mapper("colorsHarvested")]
     fn colors_harvested(&self, user: &ManagedAddress) -> UnorderedSetMapper<Color>;
 
-    // each user stakes one nonce from the collection
-    // #[storage_mapper("currentHarvestColor")]
-    // fn current_harvest_color(&self, user: &ManagedAddress) -> SingleValueMapper<Color>;
-
     // how much time it takes to produce one unit of a specific color
     #[storage_mapper("harvestDuration")]
     fn harvest_duration(&self, color: &Color) -> SingleValueMapper<u64>;

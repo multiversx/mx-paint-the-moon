@@ -13,11 +13,11 @@
         },
         "framework": {
             "name": "multiversx-sc",
-            "version": "0.52.3"
+            "version": "0.53.0"
         }
     },
     "docs": [
-        "An empty contract. To be used as a template when starting a new contract from scratch."
+        "A very light contract containing the map points and their state."
     ],
     "name": "PaintTheMoonSc",
     "constructor": {
@@ -38,11 +38,33 @@
             "inputs": [
                 {
                     "name": "point",
-                    "type": "u8"
+                    "type": "u64"
                 },
                 {
                     "name": "new_color",
                     "type": "Color"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "getAllPoints",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "List<Point>"
+                }
+            ]
+        },
+        {
+            "name": "initial_map_setup",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "points",
+                    "type": "List<Point>"
                 }
             ],
             "outputs": []
@@ -54,7 +76,7 @@
             "inputs": [
                 {
                     "name": "point",
-                    "type": "u8",
+                    "type": "u64",
                     "indexed": true
                 },
                 {
@@ -72,6 +94,10 @@
             "type": "enum",
             "variants": [
                 {
+                    "name": "White",
+                    "discriminant": 0
+                },
+                {
                     "name": "Black",
                     "discriminant": 1
                 },
@@ -82,6 +108,35 @@
                 {
                     "name": "Red",
                     "discriminant": 3
+                },
+                {
+                    "name": "Yellow",
+                    "discriminant": 4
+                },
+                {
+                    "name": "Green",
+                    "discriminant": 5
+                },
+                {
+                    "name": "Purple",
+                    "discriminant": 6
+                },
+                {
+                    "name": "Grey",
+                    "discriminant": 7
+                }
+            ]
+        },
+        "Point": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "coordinates",
+                    "type": "u64"
+                },
+                {
+                    "name": "color",
+                    "type": "Color"
                 }
             ]
         }
