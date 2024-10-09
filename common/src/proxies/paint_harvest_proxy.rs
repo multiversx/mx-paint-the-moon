@@ -7,6 +7,7 @@
 #![allow(dead_code)]
 #![allow(clippy::all)]
 
+use crate::Color;
 use multiversx_sc::proxy_imports::*;
 
 pub struct PaintHarvestScProxy;
@@ -224,17 +225,4 @@ where
             .argument(&amount)
             .original_result()
     }
-}
-
-#[type_abi]
-#[derive(TopEncode, TopDecode, NestedEncode, NestedDecode, Clone, Copy, ManagedVecItem)]
-pub enum Color {
-    White,
-    Black,
-    Blue,
-    Red,
-    Yellow,
-    Green,
-    Purple,
-    Grey,
 }

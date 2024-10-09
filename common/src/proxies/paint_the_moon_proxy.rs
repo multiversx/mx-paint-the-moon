@@ -9,6 +9,8 @@
 
 use multiversx_sc::proxy_imports::*;
 
+use crate::{Color, Point};
+
 pub struct PaintTheMoonScProxy;
 
 impl<Env, From, To, Gas> TxProxyTrait<Env, From, To, Gas> for PaintTheMoonScProxy
@@ -117,28 +119,4 @@ where
             .argument(&points)
             .original_result()
     }
-}
-
-#[type_abi]
-#[derive(
-    TopEncode, TopDecode, NestedEncode, NestedDecode, Copy, Clone, PartialEq, ManagedVecItem, Debug,
-)]
-pub enum Color {
-    White,
-    Black,
-    Blue,
-    Red,
-    Yellow,
-    Green,
-    Purple,
-    Grey,
-}
-
-#[type_abi]
-#[derive(
-    TopEncode, TopDecode, NestedEncode, NestedDecode, ManagedVecItem, Copy, Clone, Debug, PartialEq,
-)]
-pub struct Point {
-    pub coordinates: u64,
-    pub color: Color,
 }

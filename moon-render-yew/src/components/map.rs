@@ -1,3 +1,4 @@
+use common::{MAX_HEIGHT, MAX_WIDTH};
 use std::cell::RefCell;
 use std::rc::Rc;
 use wasm_bindgen::prelude::*;
@@ -133,7 +134,7 @@ pub fn map() -> Html {
         <div class = "outer-map-container">
             <input type="file" accept="moon/jpg" onchange={load_image} />
             <div class = "map-container">
-            <canvas ref={canvas_ref} width="500" height="500"></canvas>
+            <canvas ref={canvas_ref} width={format!("{}", MAX_WIDTH)} height={format!("{}", MAX_HEIGHT)}></canvas>
             </div>
             <button onclick={recolor_image}>{ "Recolor Image" }</button>
         </div>
