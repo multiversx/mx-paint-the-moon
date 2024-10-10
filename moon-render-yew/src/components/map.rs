@@ -8,7 +8,7 @@ use yew::prelude::*;
 #[function_component(Map)]
 pub fn map() -> Html {
     let canvas_ref = use_node_ref();
-    let pixels_ref = use_state(|| vec![]); // pixel data
+    let pixels_ref = use_state(Vec::new); // pixel data
 
     // load the image into the canvas and extract bitmap data
     let load_image = {
@@ -118,7 +118,7 @@ pub fn map() -> Html {
 
             // create new ImageData from modified pixel array
             let new_image_data = web_sys::ImageData::new_with_u8_clamped_array_and_sh(
-                wasm_bindgen::Clamped(&mut pixels),
+                wasm_bindgen::Clamped(&pixels),
                 canvas.width(),
                 canvas.height(),
             )

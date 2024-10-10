@@ -8,8 +8,8 @@ pub async fn deploy_paint_the_moon() -> Result<Bech32Address, String> {
     contract_interact.deploy_paint_the_moon().await
 }
 
-pub async fn initial_moon_setup(painted_points: Vec<Point>) -> Result<String, String> {
+pub async fn _initial_moon_setup(painted_points: Vec<Point>) -> Result<String, String> {
     let mut contract_interact = ContractInteract::new().await;
 
-    contract_interact.initial_moon_setup(painted_points).await
+    contract_interact._initial_moon_setup(painted_points).await
 }

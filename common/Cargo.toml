@@ -10,3 +10,6 @@ path = "src/lib.rs"
 serde = { version = "1.0", features = ["derive"] }
 multiversx-sc-snippets-dapp = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "2d18801187a5ea89949647f07553ed80e695dab5" }
 multiversx-sc = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "2d18801187a5ea89949647f07553ed80e695dab5" }
+toml = { version = "0.8.19" }
+web-sys = { version = "0.3.70", features = ["Window"] }
+gloo-net = { version = "0.6.0", features = ["json"] }

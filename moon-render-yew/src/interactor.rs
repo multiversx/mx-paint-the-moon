@@ -16,7 +16,7 @@ pub struct ContractInteract {
 impl ContractInteract {
     pub async fn new() -> Self {
         let config = Config::new();
-        let mut interactor = DappInteractor::new(&config.gateway(), false).await;
+        let mut interactor = DappInteractor::new(config.gateway(), false).await;
         let wallet_address = interactor.register_wallet(test_wallets::mike()).await;
 
         let contract_code = BytesValue::from(CONTRACT_CODE.paint_the_moon);
@@ -34,7 +34,7 @@ impl ContractInteract {
             .interactor
             .query()
             .to(Bech32Address::from_bech32_string(
-                self.config.current_address().to_string(),
+                self.config.paint_the_moon_address().to_string(),
             ))
             .typed(PaintTheMoonScProxy)
             .get_all_points()
@@ -61,6 +61,27 @@ impl ContractInteract {
             .run()
             .await;
 
+        // set config addr
+        // for now, also a new address should be set in the file
+        self.config
+            .set_paint_the_moon_address(new_address.to_bech32_string());
+
+        // send config to microsv, updates the local file
+        // the entire logic will be moved to the microservice
+        // let result = post_request::<Destination>(
+        //     &self.config.microservice_url(), // add actual route
+        //     Some(JsValue::from(format!("{:?}", self.config.dest()))),
+        // )
+        // .await;
+
+        // match result {
+        //     Ok(dest) => {
+        //         log::info!("New state destination: {dest:#?}");
+        //         self.config.set_dest(dest);
+        //     }
+        //     Err(err) => log::info!("Updating state destination request failed: {err:#?}"),
+        // }
+
         Ok(new_address)
     }
 
@@ -69,7 +90,7 @@ impl ContractInteract {
             .tx()
             .from(&self.wallet_address)
             .to(Bech32Address::from_bech32_string(
-                self.config.current_address().to_string(),
+                self.config.paint_the_moon_address().to_string(),
             ))
             .gas(5_000_000u64)
             .typed(PaintTheMoonScProxy)
@@ -81,7 +102,7 @@ impl ContractInteract {
         Ok("Painting successful".to_string())
     }
 
-    pub async fn initial_moon_setup(
+    pub async fn _initial_moon_setup(
         &mut self,
         painted_points: Vec<Point>,
     ) -> Result<String, String> {
@@ -89,7 +110,7 @@ impl ContractInteract {
             .tx()
             .from(&self.wallet_address)
             .to(Bech32Address::from_bech32_string(
-                self.config.current_address().to_string(),
+                self.config.paint_the_moon_address().to_string(),
             ))
             .gas(60_000_000u64)
             .typed(PaintTheMoonScProxy)

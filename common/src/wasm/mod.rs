@@ -15,5 +15,11 @@ impl ContractCode {
     }
 }
 
+impl Default for ContractCode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 // export a static instance for other crates to use
 pub const CONTRACT_CODE: ContractCode = ContractCode::new();

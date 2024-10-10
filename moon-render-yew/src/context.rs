@@ -42,7 +42,6 @@ pub fn config_provider(props: &ChildrenProps) -> Html {
         move |_| {
             wasm_bindgen_futures::spawn_local(async move {
                 let new_points = refresh_context().await;
-                // let new_points = Vec::new();
 
                 // Emit the new status inside the async block
                 set_points_async.emit(new_points);
