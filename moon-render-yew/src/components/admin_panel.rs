@@ -84,7 +84,7 @@ pub fn admin_panel() -> Html {
             if *show_points {
                 html! {
                     <>
-                        <p>{ context.points.len() }</p>
+                        <p>{ context.points.0.len() }</p>
                     </>
                 }
             }

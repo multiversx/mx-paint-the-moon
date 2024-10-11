@@ -1,5 +1,7 @@
 [workspace]
 members = [
+    "common",
+
     "paint-harvest-sc",
     "paint-harvest-sc/meta",
 
@@ -8,5 +10,5 @@ members = [
 
     "moon-render-yew",
 
-    "common",
+    "microservice",
 ]

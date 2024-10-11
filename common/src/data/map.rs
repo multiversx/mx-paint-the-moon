@@ -1,4 +1,5 @@
 use multiversx_sc::derive_imports::*;
+use serde::{Deserialize, Serialize};
 
 pub const ISSUE_COST: u64 = 50000000000000000;
 
@@ -7,7 +8,17 @@ pub const MAX_WIDTH: u32 = 500;
 
 #[type_abi]
 #[derive(
-    TopEncode, TopDecode, NestedEncode, NestedDecode, Copy, Clone, PartialEq, ManagedVecItem, Debug,
+    Serialize,
+    Deserialize,
+    TopEncode,
+    TopDecode,
+    NestedEncode,
+    NestedDecode,
+    Copy,
+    Clone,
+    PartialEq,
+    ManagedVecItem,
+    Debug,
 )]
 pub enum Color {
     White,
@@ -22,7 +33,17 @@ pub enum Color {
 
 #[type_abi]
 #[derive(
-    TopEncode, TopDecode, NestedEncode, NestedDecode, ManagedVecItem, Copy, Clone, Debug, PartialEq,
+    Serialize,
+    Deserialize,
+    TopEncode,
+    TopDecode,
+    NestedEncode,
+    NestedDecode,
+    ManagedVecItem,
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
 )]
 pub struct Point {
     pub coordinates: u64,

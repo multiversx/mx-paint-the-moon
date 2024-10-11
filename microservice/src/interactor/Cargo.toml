@@ -1,0 +1,11 @@
+[package]
+name = "interactor"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "lib.rs"
+
+[dependencies]
+multiversx-sc-snippets = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "2d18801187a5ea89949647f07553ed80e695dab5" }
+common = { path = "../../../common" }

@@ -1,3 +1,5 @@
-microservice_url = "127.0.0.1:8089"
+gateway = "https://devnet-gateway.multiversx.com"
+microservice_url = "http://127.0.0.1:8089"
+redis_url = "redis://localhost:6379"
 paint_the_moon_address = "erd1qqqqqqqqqqqqqpgqf8snmxxg4tkq8fg7hl8uqamkgdwy29fga4sqjg2set"
-paint_harvest_address = ""
+paint_harvest_address = "erd1qqqqqqqqqqqqqpgqf8snmxxg4tkq8fg7hl8uqamkgdwy29fga4sqjg2set"

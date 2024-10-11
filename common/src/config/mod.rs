@@ -1,2 +1,5 @@
 mod data;
-pub use data::{Config, Destination};
+mod routes;
+
+pub use data::Config;
+pub use routes::*;
