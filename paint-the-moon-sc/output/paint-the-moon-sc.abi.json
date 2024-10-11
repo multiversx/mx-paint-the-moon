@@ -13,7 +13,7 @@
         },
         "framework": {
             "name": "multiversx-sc",
-            "version": "0.53.0"
+            "version": "0.53.2"
         }
     },
     "docs": [
@@ -30,6 +30,9 @@
     },
     "endpoints": [
         {
+            "docs": [
+                "Endpoint used to change the state (color) of a point."
+            ],
             "name": "paint",
             "mutability": "mutable",
             "payableInTokens": [
@@ -48,16 +51,10 @@
             "outputs": []
         },
         {
-            "name": "getAllPoints",
-            "mutability": "readonly",
-            "inputs": [],
-            "outputs": [
-                {
-                    "type": "List<Point>"
-                }
-            ]
-        },
-        {
+            "docs": [
+                "Endpoint used initially to set up the current stage of the map.",
+                "We use a mercator representation of the moon for the initial setup, so the actual moon layout will be passed here."
+            ],
             "name": "initial_map_setup",
             "onlyOwner": true,
             "mutability": "mutable",
@@ -68,10 +65,26 @@
                 }
             ],
             "outputs": []
+        },
+        {
+            "docs": [
+                "Iterates through all available keys and fetches the current state (color)."
+            ],
+            "name": "getAllPoints",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "List<Point>"
+                }
+            ]
         }
     ],
     "events": [
         {
+            "docs": [
+                "Announces the succesful painting of a point."
+            ],
             "identifier": "",
             "inputs": [
                 {

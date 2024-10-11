@@ -1,4 +1,5 @@
-use common::{get_request, Config, Points, QueryRoutes, Routes};
+use common::{Config, Points, QueryRoutes, Routes};
+use super::get_request;
 
 pub async fn get_all_points() -> Result<Points, String> {
     let config = Config::new();

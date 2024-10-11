@@ -7,5 +7,5 @@ edition = "2021"
 path = "lib.rs"
 
 [dependencies]
-multiversx-sc-snippets = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "2d18801187a5ea89949647f07553ed80e695dab5" }
+multiversx-sc-snippets = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "3a0c91737ef73c133c9aa95b690eba9909cb6063" }
 common = { path = "../../../common" }

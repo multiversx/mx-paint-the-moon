@@ -1,12 +1,11 @@
-use common::{Color, Config, PaintTheMoonScProxy, CONTRACT_CODE};
+use common::{Color, Config, PaintTheMoonScProxy};
 
-use multiversx_sc_snippets_dapp::imports::{test_wallets, Address, Bech32Address, BytesValue};
+use multiversx_sc_snippets_dapp::imports::{test_wallets, Address, Bech32Address};
 use multiversx_sc_snippets_dapp::{imports::*, DappInteractor};
 
 pub struct ContractInteract {
     pub interactor: DappInteractor,
     pub wallet_address: Address,
-    pub contract_code: BytesValue,
     pub config: Config,
 }
 
@@ -16,12 +15,9 @@ impl ContractInteract {
         let mut interactor = DappInteractor::new(config.gateway(), false).await;
         let wallet_address = interactor.register_wallet(test_wallets::mike()).await;
 
-        let contract_code = BytesValue::from(CONTRACT_CODE.paint_the_moon);
-
         ContractInteract {
             interactor,
             wallet_address,
-            contract_code,
             config,
         }
     }

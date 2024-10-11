@@ -1,8 +1,7 @@
-use std::{cell::RefCell, rc::Rc};
-
 use crate::requests::query;
-use common::{get_request, Config, Points};
+use common::{Config, Points};
 use html::ChildrenProps;
+use std::{cell::RefCell, rc::Rc};
 use yew::prelude::*;
 
 #[derive(Clone, Debug, PartialEq)]

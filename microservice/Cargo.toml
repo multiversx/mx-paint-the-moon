@@ -8,5 +8,5 @@ actix-cors = "0.7"
 actix-web = "4.9.0"
 common = { path = "../common" }
 interactor = { path = "src/interactor" }
-multiversx-sc-snippets = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "2d18801187a5ea89949647f07553ed80e695dab5" }
+multiversx-sc-snippets = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "3a0c91737ef73c133c9aa95b690eba9909cb6063" }
 redis = { version = "0.27.0", features = ["async-std-comp"] }

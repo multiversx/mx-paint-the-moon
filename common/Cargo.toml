@@ -9,12 +9,8 @@ path = "src/lib.rs"
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 toml = { version = "0.8.19" }
-multiversx-sc = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "2d18801187a5ea89949647f07553ed80e695dab5" }
-multiversx-sc-snippets-dapp = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "2d18801187a5ea89949647f07553ed80e695dab5" }
-
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-web-sys = { version = "0.3.70", features = ["Window"] }
-gloo-net = { version = "0.6.0", features = ["json"] }
+multiversx-sc = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "3a0c91737ef73c133c9aa95b690eba9909cb6063" }
+multiversx-sc-snippets-dapp = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "3a0c91737ef73c133c9aa95b690eba9909cb6063" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 actix-web = "4.9.0"

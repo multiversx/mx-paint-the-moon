@@ -36,7 +36,7 @@ pub trait PaintHarvestSc:
         // check payment token id
         let payment = self.call_value().single_esdt();
         require!(
-            &payment.token_identifier == &self.collection_token_id().get(),
+            payment.token_identifier == self.collection_token_id().get(),
             "Wrong NFT sent"
         );
 

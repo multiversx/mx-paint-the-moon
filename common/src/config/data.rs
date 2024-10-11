@@ -1,11 +1,15 @@
 use multiversx_sc_snippets_dapp::imports::*;
 use serde::{Deserialize, Serialize};
+
+#[cfg(not(target_arch = "wasm32"))]
 use std::{
     io::{Read, Write},
     path::Path,
 };
 
+#[cfg(not(target_arch = "wasm32"))]
 const STATE_FILE: &str = "common/src/config/state.toml";
+
 const _STATE_CONTENT: &str = include_str!("state.toml");
 
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq, Clone)]

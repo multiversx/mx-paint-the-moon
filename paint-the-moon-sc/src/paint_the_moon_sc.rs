@@ -20,9 +20,9 @@ pub trait PaintTheMoonSc {
         let paint_id = self.paint_id(&new_color).get();
 
         require!(
-            &payment.token_identifier == &paint_id
+            payment.token_identifier == paint_id
                 && payment.token_nonce == 0u64
-                && &payment.amount == &BigUint::from(1u64),
+                && payment.amount == BigUint::from(1u64),
             "only one unit of paint can be sent at once"
         );
 
@@ -33,7 +33,7 @@ pub trait PaintTheMoonSc {
             "wrong point coordinates (key)"
         );
 
-        if &new_color == &Color::White {
+        if new_color == Color::White {
             self.color(point).clear();
             self.all_points().swap_remove(&point);
         } else {

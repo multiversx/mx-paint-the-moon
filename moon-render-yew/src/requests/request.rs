@@ -1,11 +1,7 @@
-#[cfg(target_arch = "wasm32")]
 use gloo_net::http::Request;
-#[cfg(target_arch = "wasm32")]
 use serde::de::DeserializeOwned;
-#[cfg(target_arch = "wasm32")]
 use web_sys::wasm_bindgen::JsValue;
 
-#[cfg(target_arch = "wasm32")]
 pub async fn get_request<T: DeserializeOwned>(dest: &str) -> Result<T, JsValue> {
     let response = Request::get(dest)
         .send()
@@ -26,7 +22,6 @@ pub async fn get_request<T: DeserializeOwned>(dest: &str) -> Result<T, JsValue> 
     }
 }
 
-#[cfg(target_arch = "wasm32")]
 pub async fn post_request<T: DeserializeOwned>(
     dest: &str,
     req_body: Option<JsValue>,

@@ -1,6 +1,6 @@
+use super::post_request;
 use common::{
-    post_request, Config, DeployResponse, InitialMoonSetup, Points, QueryResponse, Routes,
-    SetupRoutes,
+    Config, DeployResponse, InitialMoonSetup, Points, QueryResponse, Routes, SetupRoutes,
 };
 use multiversx_sc_snippets_dapp::imports::Bech32Address;
 
