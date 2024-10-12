@@ -3,7 +3,6 @@ use web_sys::HtmlCanvasElement;
 
 mod checker3d;
 mod moon3d;
-mod sphere;
 
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;

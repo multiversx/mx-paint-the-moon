@@ -16,5 +16,11 @@ plotters-canvas = "^0.3.0"
 image = { version = "0.25.2", default-features = false, features = ["jpeg"] }
 anyhow = "1.0.89"
 
+[dependencies.sphere]
+path = "../sphere"
+
 [profile.release]
 lto = true
+
+[workspace]
+members = ["."]

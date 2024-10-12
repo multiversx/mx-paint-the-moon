@@ -38,7 +38,7 @@ fn wrap_width(x: i32, width: u32) -> u32 {
     x.rem_euclid(width as i32) as u32
 }
 
-pub fn sphere<F, Err>(
+pub fn render_sphere<F, Err>(
     size: u32,
     long0: f32,
     source: &DynamicImage,

@@ -1,4 +1,4 @@
-use crate::{sphere::sphere, DrawResult};
+use crate::DrawResult;
 use image::{DynamicImage, ImageReader};
 use plotters::prelude::*;
 use plotters_canvas::CanvasBackend;
@@ -26,7 +26,7 @@ pub fn draw(canvas: HtmlCanvasElement, long0: f64) -> DrawResult<()> {
 
     let source = moon_source()?;
 
-    sphere(size, -long0 as f32, &source, |x, y, r, g, b| {
+    sphere::render_sphere(size, -long0 as f32, &source, |x, y, r, g, b| {
         area.draw_pixel((x as i32, y as i32), &RGBColor(r, g, b))
     })?;
 
