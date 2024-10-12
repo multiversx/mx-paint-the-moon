@@ -1,9 +1,8 @@
 use wasm_bindgen::prelude::*;
 use web_sys::HtmlCanvasElement;
 
-mod func_plot;
-mod mandelbrot;
-mod plot3d;
+mod checker3d;
+mod moon3d;
 mod sphere;
 
 #[global_allocator]
@@ -28,26 +27,13 @@ pub struct Point {
 
 #[wasm_bindgen]
 impl Chart {
-    /// Draw provided power function on the canvas element using it's id.
-    /// Return `Chart` struct suitable for coordinate conversion.
-    pub fn power(canvas_id: &str, power: i32) -> Result<Chart, JsValue> {
-        let map_coord = func_plot::draw(canvas_id, power).map_err(|err| err.to_string())?;
-        Ok(Chart {
-            convert: Box::new(move |coord| map_coord(coord).map(|(x, y)| (x.into(), y.into()))),
-        })
+    pub fn moon3d(canvas: HtmlCanvasElement, long0: f64) -> Result<(), JsValue> {
+        moon3d::draw(canvas, long0).map_err(|err| err.to_string())?;
+        Ok(())
     }
 
-    /// Draw Mandelbrot set on the provided canvas element.
-    /// Return `Chart` struct suitable for coordinate conversion.
-    pub fn mandelbrot(canvas: HtmlCanvasElement) -> Result<Chart, JsValue> {
-        let map_coord = mandelbrot::draw(canvas).map_err(|err| err.to_string())?;
-        Ok(Chart {
-            convert: Box::new(map_coord),
-        })
-    }
-
-    pub fn plot3d(canvas: HtmlCanvasElement, pitch: f64, yaw: f64) -> Result<(), JsValue> {
-        plot3d::draw(canvas, pitch, yaw).map_err(|err| err.to_string())?;
+    pub fn checker3d(canvas: HtmlCanvasElement, long0: f64) -> Result<(), JsValue> {
+        checker3d::draw(canvas, long0).map_err(|err| err.to_string())?;
         Ok(())
     }
 

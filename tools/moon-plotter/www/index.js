@@ -6,7 +6,6 @@ const canvas = document.getElementById("canvas");
 const coord = document.getElementById("coord");
 const plotType = document.getElementById("plot-type");
 const pitch = document.getElementById("pitch");
-const yaw = document.getElementById("yaw");
 const control = document.getElementById("3d-control");
 const status = document.getElementById("status");
 
@@ -33,9 +32,7 @@ export function setup(WasmChart) {
 function setupUI() {
     status.innerText = "WebAssembly loaded!";
     plotType.addEventListener("change", updatePlot);
-	yaw.addEventListener("change", updatePlot);
 	pitch.addEventListener("change", updatePlot);
-	yaw.addEventListener("input", updatePlot);
 	pitch.addEventListener("input", updatePlot);
     window.addEventListener("resize", setupCanvas);
     window.addEventListener("mousemove", onMouseMove);
@@ -71,11 +68,16 @@ function onMouseMove(event) {
     }
 }
 
-function updatePlot3d() {
-	let yaw_value = Number(yaw.value) / 100.0;
+function updateMoon3d() {
 	let pitch_value = Number(pitch.value) / 100.0;
-	Chart.plot3d(canvas, pitch_value, yaw_value);
-	coord.innerText = `Pitch:${pitch_value}, Yaw:${yaw_value}`
+	Chart.moon3d(canvas, pitch_value);
+	coord.innerText = `Pitch:${pitch_value}`
+}
+
+function updateChecker3d() {
+	let pitch_value = Number(pitch.value) / 100.0;
+	Chart.checker3d(canvas, pitch_value);
+	coord.innerText = `Pitch:${pitch_value}`
 }
 
 /** Redraw currently selected plot. */
@@ -85,17 +87,12 @@ function updatePlot() {
     chart = null;
     const start = performance.now();
 	switch(selected.value) {
-		case "mandelbrot":
-			control.classList.add("hide");
-			chart = Chart.mandelbrot(canvas);
+		case "moon": 
+			updateMoon3d();
 			break;
-		case "3d-plot": 
-			control.classList.remove("hide");
-			updatePlot3d();
+		case "checker": 
+			updateChecker3d();
 			break;
-		default:
-			control.classList.add("hide");
-			chart = Chart.power("canvas", Number(selected.value))
 	}
 	
     const end = performance.now();

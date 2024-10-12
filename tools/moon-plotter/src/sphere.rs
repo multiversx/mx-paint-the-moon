@@ -38,14 +38,14 @@ fn wrap_width(x: i32, width: u32) -> u32 {
     x.rem_euclid(width as i32) as u32
 }
 
-pub fn sphere<F>(
+pub fn sphere<F, Err>(
     size: u32,
     long0: f32,
     source: &DynamicImage,
     mut put_pixel: F,
-) -> anyhow::Result<()>
+) -> Result<(), Err>
 where
-    F: FnMut(u32, u32, u8, u8, u8),
+    F: FnMut(u32, u32, u8, u8, u8) -> Result<(), Err>,
 {
     let globe_r = (size / 2) as f32;
 
@@ -74,7 +74,7 @@ where
                 if source_y < source.height() {
                     let source_pixel = source.get_pixel(source_x_wrap, source_y);
                     let channels = source_pixel.channels();
-                    put_pixel(x, y, channels[0], channels[1], channels[2]);
+                    put_pixel(x, y, channels[0], channels[1], channels[2])?;
                 }
             }
         }
