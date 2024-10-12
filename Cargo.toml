@@ -9,4 +9,5 @@ members = [
     "paint-the-moon-sc/meta",
 
     "tools/img-processing",
+    "tools/moon-plotter",
 ]
