@@ -1,4 +1,5 @@
 use common::Color;
+use std::rc::Rc;
 use yew::prelude::*;
 
 use crate::{
@@ -19,11 +20,13 @@ pub fn admin_panel() -> Html {
 
         Callback::from(move |_| {
             let deploy_response = deploy_response.clone();
+            let config = Rc::clone(&context.config);
 
             log::info!("SC setup request triggered");
 
             wasm_bindgen_futures::spawn_local(async move {
-                match setup::deploy_paint_the_moon().await {
+                let config = config.borrow().clone();
+                match setup::deploy_paint_the_moon(&config).await {
                     Ok(result) => {
                         deploy_response.set(format!(
                             "New deployed address: {}",

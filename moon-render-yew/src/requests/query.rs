@@ -1,8 +1,7 @@
-use common::{Config, Points, QueryRoutes, Routes};
 use super::get_request;
+use common::{Config, Points, QueryRoutes, Routes};
 
-pub async fn get_all_points() -> Result<Points, String> {
-    let config = Config::new();
+pub async fn get_all_points(config: &Config) -> Result<Points, String> {
     let dest = format!(
         "{}{}",
         config.microservice_url(),
@@ -17,7 +16,7 @@ pub async fn get_all_points() -> Result<Points, String> {
 }
 
 pub async fn get_config() -> Result<Config, String> {
-    let config = Config::new();
+    let config = Config::new(); // take microservice url from file
     let dest = format!(
         "{}{}",
         config.microservice_url(),

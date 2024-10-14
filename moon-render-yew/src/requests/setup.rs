@@ -4,8 +4,7 @@ use common::{
 };
 use multiversx_sc_snippets_dapp::imports::Bech32Address;
 
-pub async fn deploy_paint_the_moon() -> Result<Bech32Address, String> {
-    let config = Config::new();
+pub async fn deploy_paint_the_moon(config: &Config) -> Result<Bech32Address, String> {
     let dest = format!(
         "{}{}",
         config.microservice_url(),
@@ -20,8 +19,10 @@ pub async fn deploy_paint_the_moon() -> Result<Bech32Address, String> {
     }
 }
 
-pub async fn _initial_moon_setup(painted_points: Points) -> Result<Points, String> {
-    let config = Config::new();
+pub async fn _initial_moon_setup(
+    config: &Config,
+    painted_points: Points,
+) -> Result<Points, String> {
     let dest = format!(
         "{}{}",
         config.microservice_url(),

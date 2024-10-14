@@ -25,12 +25,12 @@ impl Default for ConfigContext {
 
 pub async fn refresh_context() -> (Config, Points) {
     log::info!("refreshing context");
-    let points = query::get_all_points().await.unwrap_or_default();
-    // reconstruct entire map (make rest of the points white)
-    // or receive it already reconstructed from the microservice
-
     // get config from call to the microservice
     let new_config = query::get_config().await.unwrap_or_default();
+
+    let points = query::get_all_points(&new_config).await.unwrap_or_default();
+    // reconstruct entire map (make rest of the points white)
+    // or receive it already reconstructed from the microservice
     (new_config, points)
 }
 
