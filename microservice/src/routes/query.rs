@@ -1,10 +1,11 @@
-use actix_web::{get, web, Responder};
+use crate::redis_local::Redis;
+use actix_web::{get, web, HttpResponse, Responder};
 use base::InteractorPrepareAsync;
 use common::{Config, PaintTheMoonScProxy, Points, QueryResponse};
-use imports::{Bech32Address, ReturnsResultUnmanaged};
+use imports::{Bech32Address, ReturnsHandledOrError, ReturnsResultUnmanaged};
 use interactor::ContractInteract;
 use multiversx_sc_snippets::*;
-use redis::{AsyncCommands, Client, RedisError};
+use redis::{AsyncCommands, RedisError};
 
 #[get("/get_config")]
 pub async fn get_config() -> impl Responder {
@@ -12,12 +13,9 @@ pub async fn get_config() -> impl Responder {
 }
 
 #[get("/get_points")]
-pub async fn get_points(redis_client: web::Data<Client>) -> impl Responder {
+pub async fn get_points(redis_client: web::Data<Redis>) -> impl Responder {
     let mut contract_interact = ContractInteract::new().await;
-    let mut con = redis_client
-        .get_multiplexed_async_connection()
-        .await
-        .unwrap();
+    let mut con = redis_client.new_connection().await;
 
     let points_cached_value: Result<Points, RedisError> = con.get("points").await;
 
@@ -26,7 +24,7 @@ pub async fn get_points(redis_client: web::Data<Client>) -> impl Responder {
         Err(_) => {
             let current_address = contract_interact.config.paint_the_moon_address();
 
-            let points_vec = contract_interact
+            let result = contract_interact
                 .interactor
                 .query()
                 .to(Bech32Address::from_bech32_string(
@@ -34,15 +32,23 @@ pub async fn get_points(redis_client: web::Data<Client>) -> impl Responder {
                 ))
                 .typed(PaintTheMoonScProxy)
                 .get_all_points()
-                .returns(ReturnsResultUnmanaged)
+                .returns(ReturnsHandledOrError::new().returns(ReturnsResultUnmanaged))
                 .prepare_async()
                 .run()
                 .await;
 
-            let points = Points(points_vec);
-            let _: () = con.set("points", &points).await.unwrap();
+            match result {
+                Ok(points_vec) => {
+                    let points = Points(points_vec);
+                    let _: () = con.set("points", &points).await.unwrap();
 
-            QueryResponse::new(points).response()
+                    QueryResponse::new(points).response()
+                }
+                Err(err) => HttpResponse::InternalServerError().body(format!(
+                    "Get points SC query failed with error message: {:#?}",
+                    err.message
+                )),
+            }
         }
     }
 }

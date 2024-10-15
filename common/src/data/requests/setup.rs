@@ -23,16 +23,6 @@ pub struct PaintHarvestDeploy {
     pub is_open: bool,
 }
 
-pub trait SetupRequests {}
-
-#[derive(Serialize, Deserialize)]
-pub struct SetupRequestBody<T: SetupRequests> {
-    pub body: T,
-}
-
-impl SetupRequests for PaintHarvestDeploy {}
-impl SetupRequests for InitialMoonSetup {}
-
 #[derive(Serialize, Deserialize)]
 pub struct DeployResponse {
     pub new_address: Bech32Address,

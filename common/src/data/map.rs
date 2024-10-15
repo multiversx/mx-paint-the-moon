@@ -70,5 +70,16 @@ pub struct UserInfo {
 }
 
 #[type_abi]
-#[derive(TopEncode, TopDecode, NestedEncode, NestedDecode, Clone, Copy)]
+#[derive(
+    TopEncode,
+    TopDecode,
+    NestedEncode,
+    NestedDecode,
+    Clone,
+    Copy,
+    Debug,
+    Serialize,
+    Deserialize,
+    PartialEq,
+)]
 pub struct Coordinates(pub u32, pub u32);
