@@ -33,7 +33,7 @@ pub trait OwnerModule:
 
         let payment_amount = self.call_value().egld_value().clone_value();
         require!(
-            payment_amount == BigUint::from(ISSUE_COST),
+            payment_amount == ISSUE_COST,
             "Issue cost (0,05 egld) should be sent to this endpoint"
         );
 

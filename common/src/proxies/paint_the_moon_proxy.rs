@@ -9,7 +9,7 @@
 
 use multiversx_sc::proxy_imports::*;
 
-use crate::{Color, Point};
+use crate::Point;
 
 pub struct PaintTheMoonScProxy;
 
@@ -84,17 +84,14 @@ where
     Gas: TxGas<Env>,
 {
     pub fn paint<
-        Arg0: ProxyArg<u64>,
-        Arg1: ProxyArg<Color>,
+        Arg0: ProxyArg<Point>,
     >(
         self,
         point: Arg0,
-        new_color: Arg1,
     ) -> TxTypedCall<Env, From, To, (), Gas, ()> {
         self.wrapped_tx
             .raw_call("paint")
             .argument(&point)
-            .argument(&new_color)
             .original_result()
     }
 

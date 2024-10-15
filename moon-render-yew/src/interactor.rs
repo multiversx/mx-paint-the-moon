@@ -1,4 +1,4 @@
-use common::{Color, Config, PaintTheMoonScProxy};
+use common::{Config, PaintTheMoonScProxy, Point};
 
 use multiversx_sc_snippets_dapp::imports::{test_wallets, Address, Bech32Address};
 use multiversx_sc_snippets_dapp::{imports::*, DappInteractor};
@@ -22,7 +22,7 @@ impl ContractInteract {
         }
     }
 
-    pub async fn paint(&mut self, point: u64, color: Color) -> Result<String, String> {
+    pub async fn paint(&mut self, point: Point) -> Result<String, String> {
         self.interactor
             .tx()
             .from(&self.wallet_address)
@@ -31,7 +31,7 @@ impl ContractInteract {
             ))
             .gas(5_000_000u64)
             .typed(PaintTheMoonScProxy)
-            .paint(point, color)
+            .paint(point)
             .prepare_async()
             .run()
             .await;

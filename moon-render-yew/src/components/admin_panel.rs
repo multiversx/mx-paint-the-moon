@@ -1,4 +1,4 @@
-use common::Color;
+use common::{Color, Point};
 use std::rc::Rc;
 use yew::prelude::*;
 
@@ -51,10 +51,13 @@ pub fn admin_panel() -> Html {
             log::info!("Paint transaction triggered");
 
             wasm_bindgen_futures::spawn_local(async move {
-                let mock_point = 5u64;
-                let mock_color = Color::Red;
+                let mock_point = Point {
+                    x: 5u32,
+                    y: 400u32,
+                    color: Color::Red,
+                };
 
-                match transaction::paint(mock_point, mock_color).await {
+                match transaction::paint(mock_point).await {
                     Ok(result) => {
                         paint_response.set(result);
                     }
