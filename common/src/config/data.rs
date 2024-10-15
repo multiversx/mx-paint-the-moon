@@ -10,7 +10,8 @@ use std::{
 #[cfg(not(target_arch = "wasm32"))]
 const STATE_FILE: &str = "common/src/config/state.toml";
 
-const _STATE_CONTENT: &str = include_str!("state.toml");
+#[cfg(target_arch = "wasm32")]
+const STATE_CONTENT: &str = include_str!("state.toml");
 
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq, Clone)]
 pub struct Config {
@@ -25,7 +26,7 @@ impl Config {
     // wasm target, get file content
     #[cfg(target_arch = "wasm32")]
     pub fn new() -> Self {
-        toml::from_str(&_STATE_CONTENT).unwrap_or_default()
+        toml::from_str(STATE_CONTENT).unwrap_or_default()
     }
 
     // for non wasm target
