@@ -18,7 +18,6 @@ pub struct Config {
     gateway: String,
     microservice_url: String,
     redis_url: String,
-    rabbit_mq_url: String,
     paint_the_moon_address: String,
     paint_harvest_address: String,
 }
@@ -38,7 +37,6 @@ impl Config {
             let mut file = std::fs::File::open(STATE_FILE).unwrap();
             let mut content = String::new();
             file.read_to_string(&mut content).unwrap();
-            println!("here");
             toml::from_str(&content).unwrap()
         } else {
             Self::default()
@@ -51,10 +49,6 @@ impl Config {
 
     pub fn set_microservice_url(&mut self, url: String) {
         self.microservice_url = url;
-    }
-
-    pub fn set_rabbit_mq_url(&mut self, url: String) {
-        self.rabbit_mq_url = url;
     }
 
     pub fn set_paint_the_moon_address(&mut self, address: String) {
@@ -71,10 +65,6 @@ impl Config {
 
     pub fn microservice_url(&self) -> &String {
         &self.microservice_url
-    }
-
-    pub fn rabbit_mq_url(&self) -> &String {
-        &self.rabbit_mq_url
     }
 
     pub fn paint_the_moon_address(&self) -> &String {

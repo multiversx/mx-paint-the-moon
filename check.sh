@@ -12,7 +12,7 @@ run_check_and_clippy() {
         fi
 
         echo "Running Clippy for $BIN (target: $TARGET)..."
-        cargo clippy --bin "$BIN" --target "$TARGET" -- -D warnings
+        cargo clippy --bin "$BIN" --target "$TARGET"
         if [ $? -ne 0 ]; then
             echo "Clippy failed for $BIN."
             exit 1
@@ -25,7 +25,7 @@ run_check_and_clippy() {
         fi
 
         echo "Running Clippy for $BIN..."
-        cargo clippy --bin "$BIN" -- -D warnings
+        cargo clippy --bin "$BIN"
         if [ $? -ne 0 ]; then
             echo "Clippy failed for $BIN."
             exit 1

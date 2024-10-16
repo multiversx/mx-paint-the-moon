@@ -1,6 +1,7 @@
 use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
 use common::Config;
+use rabbit_mq::{RabbitMq, Splash};
 use redis_local::Redis;
 use routes::{query_configuration, setup_configuration};
 
@@ -17,14 +18,18 @@ async fn main() -> std::io::Result<()> {
 
     redis.flush_all().await;
 
-    // let rabbit_mq = RabbitMq::new(&config).await;
-    // let redis_client_effect = redis.clone();
+    let rabbit_mq = RabbitMq::new().await;
+    // declare a durable queue
+    // will be reused if created
+    rabbit_mq.declare_durable_queue("points").await;
 
-    // actix_rt::spawn(async move {
-    //     rabbit_mq
-    //         .consume_rabbitmq_events::<Splash>(&redis_client_effect, "points")
-    //         .await; // catch points updates based on events
-    // });
+    let redis_client_effect = redis.clone();
+
+    actix_rt::spawn(async move {
+        rabbit_mq
+            .consume_rabbitmq_events::<Splash>(&redis_client_effect, "points")
+            .await; // catch points updates based on events
+    });
 
     // start the Actix server
     HttpServer::new(move || {

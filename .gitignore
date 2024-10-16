@@ -2,3 +2,4 @@
 **/output/**
 **/Cargo.lock
 **/dist
+**/rabbit_mq_config.toml

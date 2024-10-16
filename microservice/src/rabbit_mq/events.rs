@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::redis_local::Redis;
 
+use super::MessageEvent;
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Splash {
     coordinates: Coordinates,
@@ -11,6 +13,9 @@ pub struct Splash {
 }
 
 pub trait Event {
+    fn from_message_event(event: &MessageEvent) -> Option<Self>
+    where
+        Self: Sized;
     fn handle_event(&self, redis_client: &Redis) -> impl std::future::Future<Output = ()> + Send;
 }
 
@@ -36,7 +41,16 @@ impl Event for Splash {
                     eprintln!("Point not found for coordinates: {:?}", self.coordinates);
                 }
             }
+            // maybe here do some logic
+            // if point is inside the map bounds and we are here
+            // that means that the key is not yet available but the point is valid
+            // reconstruct the map and create the redis key, or throw error if the point is out of bounds
             Err(err) => eprintln!("Failed to get points from Redis: {}", err),
         }
+    }
+
+    // TODO: see how to identify a Splash event
+    fn from_message_event(_message_event: &MessageEvent) -> Option<Self> {
+        None
     }
 }

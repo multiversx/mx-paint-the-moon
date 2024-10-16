@@ -31,7 +31,8 @@
     "endpoints": [
         {
             "docs": [
-                "Endpoint used to change the state (color) of a point."
+                "Endpoint used to change the state (color) of a point.",
+                "We pass a point containing the coordinates and new color."
             ],
             "name": "paint",
             "mutability": "mutable",
@@ -41,11 +42,7 @@
             "inputs": [
                 {
                     "name": "point",
-                    "type": "u64"
-                },
-                {
-                    "name": "new_color",
-                    "type": "Color"
+                    "type": "Point"
                 }
             ],
             "outputs": []
@@ -88,8 +85,8 @@
             "identifier": "",
             "inputs": [
                 {
-                    "name": "point",
-                    "type": "u64",
+                    "name": "point_position",
+                    "type": "Coordinates",
                     "indexed": true
                 },
                 {
@@ -140,12 +137,29 @@
                 }
             ]
         },
+        "Coordinates": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "0",
+                    "type": "u32"
+                },
+                {
+                    "name": "1",
+                    "type": "u32"
+                }
+            ]
+        },
         "Point": {
             "type": "struct",
             "fields": [
                 {
-                    "name": "coordinates",
-                    "type": "u64"
+                    "name": "x",
+                    "type": "u32"
+                },
+                {
+                    "name": "y",
+                    "type": "u32"
                 },
                 {
                     "name": "color",
