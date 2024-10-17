@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Plotters WebAssembly Demo</title>
+	<link rel="stylesheet" href="./style.css">
+    </head>
+    <body>
+        <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
+        <script src="./bootstrap.js"></script>
+	<main>
+	    <h1>Plotters WebAssembly Demo</h1>
+	    <div id="coord"></div>
+        <canvas id="canvas" width="100" height="100"></canvas>
+	    <div id="status">Loading WebAssembly...</div>
+	    <div id="control">
+			<label for="plot-type">Demo: </label>
+			<select id="plot-type">
+				<option value="moon">Moon</option>
+				<option value="checker">Checker pattern</option>
+			</select>
+			<div id="3d-control">
+				<label for="pitch">Face-on longitude: </label> <input type="range" min="-314" max="314" id="pitch" value="0"> <br/>
+	    </div>
+	</main>
+    </body>
+</html>

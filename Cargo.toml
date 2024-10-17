@@ -1,5 +1,6 @@
 [workspace]
 resolver = "2"
+
 members = [
     "common",
 
@@ -12,4 +13,8 @@ members = [
     "moon-render-yew",
 
     "microservice",
+
+    "tools/img-processing",
+    # "tools/moon-plotter",
+    "tools/sphere",
 ]
