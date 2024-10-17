@@ -2,11 +2,17 @@
 resolver = "2"
 
 members = [
+    "common",
+
     "paint-harvest-sc",
     "paint-harvest-sc/meta",
 
     "paint-the-moon-sc",
     "paint-the-moon-sc/meta",
+
+    "moon-render-yew",
+
+    "microservice",
 
     "tools/img-processing",
     # "tools/moon-plotter",

@@ -1,9 +1,8 @@
 #![no_std]
-use data::{Color, UserInfo};
+use common::{Color, UserInfo};
 use multiversx_sc::imports::*;
 
 mod custom_callbacks;
-mod data;
 mod events;
 mod owner;
 mod private;
@@ -37,7 +36,7 @@ pub trait PaintHarvestSc:
         // check payment token id
         let payment = self.call_value().single_esdt();
         require!(
-            &payment.token_identifier == &self.collection_token_id().get(),
+            payment.token_identifier == self.collection_token_id().get(),
             "Wrong NFT sent"
         );
 
