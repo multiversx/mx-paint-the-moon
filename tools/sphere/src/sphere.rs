@@ -49,7 +49,6 @@ where
 {
     let globe_r = (size / 2) as f32;
 
-    println!("{}:{}", source.width(), source.height());
     let source_mid_x = (source.width() / 2) as f32;
     let source_mid_y = (source.height() / 2) as f32;
 
