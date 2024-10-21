@@ -3,8 +3,6 @@
 use common::{Color, Config, ContractCode, PaintTheMoonScProxy, Point, Points, CONTRACT_CODE};
 use multiversx_sc_snippets::imports::*;
 
-const STATE_FILE: &str = "../state.toml";
-
 #[tokio::main]
 async fn main() {
     env_logger::init();
