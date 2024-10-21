@@ -26,13 +26,12 @@ panic = "abort"
 
 [dependencies.paint-the-moon-sc]
 path = ".."
-features = [
-    "block-size",
-    "block-size-16",
-]
+features = ["block-size-16"]
+default-features = false
 
 [dependencies.multiversx-sc-wasm-adapter]
-version = "0.52.3"
+git = "https://github.com/multiversx/mx-sdk-rs"
+rev = "fd6a6c862576b18359e65918b4e84068f11ace44"
 
 [workspace]
 members = ["."]

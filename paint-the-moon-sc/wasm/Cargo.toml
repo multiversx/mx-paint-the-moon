@@ -28,7 +28,8 @@ panic = "abort"
 path = ".."
 
 [dependencies.multiversx-sc-wasm-adapter]
-version = "0.52.3"
+git = "https://github.com/multiversx/mx-sdk-rs"
+rev = "fd6a6c862576b18359e65918b4e84068f11ace44"
 
 [workspace]
 members = ["."]

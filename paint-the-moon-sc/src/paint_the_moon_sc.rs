@@ -1,14 +1,10 @@
 #![no_std]
-use color::Color;
+// use color::Color;
 #[allow(unused_imports)]
 use multiversx_sc::imports::*;
 
 mod color;
 pub mod pixel_block;
-
-
-#[cfg(not(feature = "block-size"))]
-pub type Block = pixel_block::PixelBlock<pixel_block::PixelBlockData8>;
 
 #[cfg(feature = "block-size-8")]
 pub type Block = pixel_block::PixelBlock<pixel_block::PixelBlockData8>;
