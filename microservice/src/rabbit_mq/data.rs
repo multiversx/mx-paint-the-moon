@@ -78,7 +78,6 @@ impl RabbitMq {
 
                     let message = serde_json::from_str::<Message>(&json_str)
                         .expect("Failed to convert str into Message");
-                    println!("message is {message:#?}");
 
                     // check if there's any T event
                     for message_event in message.events {

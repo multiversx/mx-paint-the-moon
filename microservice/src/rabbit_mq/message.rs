@@ -17,9 +17,9 @@ pub struct MessageEvent {
     pub address: SdkAddress,
     pub identifier: String,
     #[serde(default)]
-    pub topics: Vec<String>,
+    pub topics: Option<Vec<String>>,
     #[serde(default)]
-    pub data: LogData,
+    pub data: Option<LogData>,
     pub tx_hash: String,
 }
 
