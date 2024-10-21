@@ -18,9 +18,9 @@ struct ContractInteract {
 impl ContractInteract {
     async fn new() -> Self {
         let config = Config::new();
+        println!("{:?}", config);
         let mut interactor = HttpInteractor::new(config.gateway(), false).await;
         let wallet_address = interactor.register_wallet(test_wallets::mike()).await;
-
         ContractInteract {
             interactor,
             wallet_address,
@@ -90,7 +90,6 @@ impl ContractInteract {
 async fn test_moon_max_size() {
     let mut interact = ContractInteract::new().await;
     let mut points = Vec::new();
-
     points.extend((0..500).flat_map(|x| {
         (0..500).map(move |y| Point {
             x,

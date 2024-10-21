@@ -9,7 +9,7 @@ members = [
 
     "paint-the-moon-sc",
     "paint-the-moon-sc/meta",
-    "paint-the-moon-sc/interactor",
+    "interactor",
 
     "moon-render-yew",
 
