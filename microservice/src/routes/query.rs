@@ -1,10 +1,7 @@
 use crate::redis_local::Redis;
 use actix_web::{get, web, HttpResponse, Responder};
-use base::InteractorPrepareAsync;
-use common::{Config, PaintTheMoonScProxy, Points, QueryResponse};
-use imports::{Bech32Address, ReturnsHandledOrError, ReturnsResultUnmanaged};
+use common::{Config, Points, QueryResponse};
 use interactor::ContractInteract;
-use multiversx_sc_snippets::*;
 use redis::{AsyncCommands, RedisError};
 
 #[get("/get_config")]
@@ -22,20 +19,7 @@ pub async fn get_points(redis_client: web::Data<Redis>) -> impl Responder {
     match points_cached_value {
         Ok(points) => QueryResponse::new(points).response(),
         Err(_) => {
-            let current_address = contract_interact.config.paint_the_moon_address();
-
-            let result = contract_interact
-                .interactor
-                .query()
-                .to(Bech32Address::from_bech32_string(
-                    current_address.to_string(),
-                ))
-                .typed(PaintTheMoonScProxy)
-                .get_all_points()
-                .returns(ReturnsHandledOrError::new().returns(ReturnsResultUnmanaged))
-                .prepare_async()
-                .run()
-                .await;
+            let result = contract_interact.get_points().await;
 
             match result {
                 Ok(points_vec) => {

@@ -9,7 +9,7 @@
 
 use multiversx_sc::proxy_imports::*;
 
-use crate::Point;
+use crate::{Color, Point};
 
 pub struct PaintTheMoonScProxy;
 
@@ -45,12 +45,16 @@ where
     From: TxFrom<Env>,
     Gas: TxGas<Env>,
 {
-    pub fn init(
+    pub fn init<
+        Arg0: ProxyArg<MultiValueEncoded<Env::Api, (TokenIdentifier<Env::Api>, Color)>>,
+    >(
         self,
+        setup: Arg0,
     ) -> TxTypedDeploy<Env, From, NotPayable, Gas, ()> {
         self.wrapped_tx
             .payment(NotPayable)
             .raw_deploy()
+            .argument(&setup)
             .original_result()
     }
 }

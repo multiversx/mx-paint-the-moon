@@ -53,13 +53,13 @@ impl Event for Splash {
                     println!("Point in bounds. Saving new key {:?}..", &self.coordinates);
 
                     //TODO: reconstruct entire map
-                    let mut points = Vec::new();
-                    points.push(Point {
+                    let points = vec![Point {
                         x: self.coordinates.0,
                         y: self.coordinates.1,
                         color: self.new_color,
-                    });
-                    let _: () = con.set("points", &Points(points)).await.unwrap();
+                    }];
+
+                    let _: () = con.set("points", Points(points)).await.unwrap();
                     println!("New points saved in Redis.");
                 }
             }

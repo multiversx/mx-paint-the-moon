@@ -3,8 +3,10 @@ use serde::{Deserialize, Serialize};
 
 #[cfg(not(target_arch = "wasm32"))]
 use std::{
-    io::{Read, Write},
-    path::Path,
+    env,
+    fs::{read_to_string, File},
+    io::{BufWriter, Error, ErrorKind, Write},
+    path::PathBuf,
 };
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -23,26 +25,6 @@ pub struct Config {
 }
 
 impl Config {
-    // wasm target, get file content
-    #[cfg(target_arch = "wasm32")]
-    pub fn new() -> Self {
-        toml::from_str(STATE_CONTENT).unwrap_or_default()
-    }
-
-    // for non wasm target
-    // read file content
-    #[cfg(not(target_arch = "wasm32"))]
-    pub fn new() -> Self {
-        if Path::new(STATE_FILE).exists() {
-            let mut file = std::fs::File::open(STATE_FILE).unwrap();
-            let mut content = String::new();
-            file.read_to_string(&mut content).unwrap();
-            toml::from_str(&content).unwrap()
-        } else {
-            Self::default()
-        }
-    }
-
     pub fn set_redis_url(&mut self, redis_url: String) {
         self.redis_url = redis_url;
     }
@@ -78,15 +60,86 @@ impl Config {
     pub fn gateway(&self) -> &String {
         &self.gateway
     }
+
+    // wasm target, get file content
+    #[cfg(target_arch = "wasm32")]
+    pub fn new() -> Self {
+        toml::from_str(STATE_CONTENT).unwrap_or_default()
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn new() -> Self {
+        match Self::resolve_state_path() {
+            Ok(path) => match read_to_string(&path) {
+                Ok(content) => toml::from_str(&content).unwrap_or_else(|err| {
+                    eprintln!("Failed to parse TOML from {}: {:#?}", path.display(), err);
+                    Self::default()
+                }),
+                Err(err) => {
+                    eprintln!(
+                        "Failed to read the state file at {}: {:#?}",
+                        path.display(),
+                        err
+                    );
+                    Self::default()
+                }
+            },
+            Err(err) => {
+                eprintln!("Error resolving state file path: {err:#?}");
+                Self::default()
+            }
+        }
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    fn resolve_state_path() -> Result<PathBuf, Error> {
+        let mut current_dir = env::current_dir()?;
+
+        loop {
+            let cargo_toml_path = current_dir.join("Cargo.toml");
+
+            if cargo_toml_path.exists() {
+                let state_path = current_dir.join(STATE_FILE);
+                if state_path.exists() {
+                    return Ok(state_path);
+                };
+            }
+
+            // stop at root
+            if !current_dir.pop() {
+                break;
+            }
+        }
+
+        Err(Error::new(
+            ErrorKind::NotFound,
+            "Failed to find top-level project directory with Cargo.toml",
+        ))
+    }
 }
 
-// write back to TOML file in the non-WASM environment
 #[cfg(not(target_arch = "wasm32"))]
 impl Drop for Config {
-    // serializes state to file
     fn drop(&mut self) {
-        let mut file = std::fs::File::create(STATE_FILE).unwrap();
-        file.write_all(toml::to_string(&self).unwrap().as_bytes())
-            .unwrap();
+        if let Ok(path) = Self::resolve_state_path() {
+            match File::create(&path) {
+                Ok(file) => {
+                    let mut writer = BufWriter::new(file);
+                    match toml::to_string(&self) {
+                        Ok(toml_content) => {
+                            if let Err(err) = writer.write_all(toml_content.as_bytes()) {
+                                eprintln!("Failed to write state file: {err:#?}");
+                            }
+                        }
+                        Err(err) => eprintln!("Failed to serialize config: {:#?}", err),
+                    }
+                }
+                Err(err) => eprintln!(
+                    "Failed to create state file at {}: {:#?}",
+                    path.display(),
+                    err
+                ),
+            }
+        }
     }
 }
