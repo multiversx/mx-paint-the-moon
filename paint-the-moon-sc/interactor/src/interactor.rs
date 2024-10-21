@@ -2,11 +2,6 @@
 
 use common::{Color, Config, ContractCode, PaintTheMoonScProxy, Point, Points, CONTRACT_CODE};
 use multiversx_sc_snippets::imports::*;
-use serde::{Deserialize, Serialize};
-use std::{
-    io::{Read, Write},
-    path::Path,
-};
 
 const STATE_FILE: &str = "../state.toml";
 
@@ -15,49 +10,11 @@ async fn main() {
     env_logger::init();
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
-struct State {
-    paint_the_moon_address: Option<Bech32Address>,
-}
-
-impl State {
-    pub fn load_state() -> Self {
-        if Path::new(STATE_FILE).exists() {
-            let mut file = std::fs::File::open(STATE_FILE).unwrap();
-            let mut content = String::new();
-            file.read_to_string(&mut content).unwrap();
-            toml::from_str(&content).unwrap()
-        } else {
-            Self::default()
-        }
-    }
-
-    pub fn set_paint_the_moon_address(&mut self, address: Bech32Address) {
-        self.paint_the_moon_address = Some(address);
-    }
-
-    pub fn current_address(&self) -> &Bech32Address {
-        self.paint_the_moon_address
-            .as_ref()
-            .expect("no known contract, deploy first")
-    }
-}
-
-impl Drop for State {
-    // Serializes state to file
-    fn drop(&mut self) {
-        let mut file = std::fs::File::create(STATE_FILE).unwrap();
-        file.write_all(toml::to_string(self).unwrap().as_bytes())
-            .unwrap();
-    }
-}
-
 struct ContractInteract {
     interactor: Interactor,
     wallet_address: Address,
     contract_code: ContractCode,
     config: Config,
-    state: State,
 }
 
 impl ContractInteract {
@@ -71,7 +28,6 @@ impl ContractInteract {
             wallet_address,
             contract_code: CONTRACT_CODE,
             config,
-            state: State::load_state(),
         }
     }
 
@@ -93,10 +49,8 @@ impl ContractInteract {
             .await;
 
         let new_address_bech32 = bech32::encode(&new_address);
-        self.state
-            .set_paint_the_moon_address(Bech32Address::from_bech32_string(
-                new_address_bech32.clone(),
-            ));
+        self.config
+            .set_paint_the_moon_address(new_address_bech32.clone());
 
         println!("new address: {new_address_bech32}");
     }
@@ -105,7 +59,9 @@ impl ContractInteract {
         self.interactor
             .tx()
             .from(&self.wallet_address)
-            .to(self.state.current_address())
+            .to(Bech32Address::from_bech32_string(
+                self.config.paint_the_moon_address().to_string(),
+            ))
             .gas(60_000_000u64)
             .typed(PaintTheMoonScProxy)
             .initial_map_setup(points.0)
@@ -119,7 +75,9 @@ impl ContractInteract {
         let result = self
             .interactor
             .query()
-            .to(self.state.current_address())
+            .to(Bech32Address::from_bech32_string(
+                self.config.paint_the_moon_address().to_string(),
+            ))
             .typed(PaintTheMoonScProxy)
             .get_all_points()
             .returns(ReturnsResult)
