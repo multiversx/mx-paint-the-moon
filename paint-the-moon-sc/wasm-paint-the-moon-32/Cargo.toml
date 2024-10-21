@@ -5,7 +5,7 @@
 # ##########################################
 
 [package]
-name = "paint-the-moon-main-wasm"
+name = "paint-the-moon-32-wasm"
 version = "0.0.0"
 edition = "2021"
 publish = false
@@ -26,6 +26,10 @@ panic = "abort"
 
 [dependencies.paint-the-moon-sc]
 path = ".."
+features = [
+    "block-size",
+    "block-size-32",
+]
 
 [dependencies.multiversx-sc-wasm-adapter]
 version = "0.52.3"

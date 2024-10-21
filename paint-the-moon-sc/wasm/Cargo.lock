@@ -116,18 +116,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "paint-the-moon-sc"
-version = "0.0.0"
-dependencies = [
- "multiversx-sc",
-]
-
-[[package]]
-name = "paint-the-moon-sc-wasm"
+name = "paint-the-moon-main-wasm"
 version = "0.0.0"
 dependencies = [
  "multiversx-sc-wasm-adapter",
  "paint-the-moon-sc",
+]
+
+[[package]]
+name = "paint-the-moon-sc"
+version = "0.0.0"
+dependencies = [
+ "multiversx-sc",
 ]
 
 [[package]]

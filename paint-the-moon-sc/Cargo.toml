@@ -8,6 +8,14 @@ publish = false
 [lib]
 path = "src/paint_the_moon_sc.rs"
 
+[features]
+# default = ["block-size-8"]
+block-size = []
+block-size-8 = []
+block-size-16 = []
+block-size-32 = []
+block-size-64 = []
+
 [dependencies.multiversx-sc]
 version = "0.52.3"
 
@@ -17,8 +25,3 @@ num-bigint = "0.4"
 [dev-dependencies.multiversx-sc-scenario]
 version = "0.52.3"
 
-# [workspace]
-# members = [
-#     ".",
-#     "meta",
-# ]
