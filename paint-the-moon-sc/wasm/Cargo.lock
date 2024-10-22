@@ -41,7 +41,7 @@ checksum = "6fe2267d4ed49bc07b63801559be28c718ea06c4738b7a03c94df7386d2cde46"
 [[package]]
 name = "multiversx-chain-core"
 version = "0.10.0"
-source = "git+https://github.com/multiversx/mx-sdk-rs?rev=fd6a6c862576b18359e65918b4e84068f11ace44#fd6a6c862576b18359e65918b4e84068f11ace44"
+source = "git+https://github.com/multiversx/mx-sdk-rs?rev=710ecc80fb2e909a3d564c9a586a48df82f53ebb#710ecc80fb2e909a3d564c9a586a48df82f53ebb"
 dependencies = [
  "bitflags",
  "multiversx-sc-codec",
@@ -50,7 +50,7 @@ dependencies = [
 [[package]]
 name = "multiversx-sc"
 version = "0.53.2"
-source = "git+https://github.com/multiversx/mx-sdk-rs?rev=fd6a6c862576b18359e65918b4e84068f11ace44#fd6a6c862576b18359e65918b4e84068f11ace44"
+source = "git+https://github.com/multiversx/mx-sdk-rs?rev=710ecc80fb2e909a3d564c9a586a48df82f53ebb#710ecc80fb2e909a3d564c9a586a48df82f53ebb"
 dependencies = [
  "bitflags",
  "hex-literal",
@@ -64,7 +64,7 @@ dependencies = [
 [[package]]
 name = "multiversx-sc-codec"
 version = "0.21.0"
-source = "git+https://github.com/multiversx/mx-sdk-rs?rev=fd6a6c862576b18359e65918b4e84068f11ace44#fd6a6c862576b18359e65918b4e84068f11ace44"
+source = "git+https://github.com/multiversx/mx-sdk-rs?rev=710ecc80fb2e909a3d564c9a586a48df82f53ebb#710ecc80fb2e909a3d564c9a586a48df82f53ebb"
 dependencies = [
  "arrayvec",
  "multiversx-sc-codec-derive",
@@ -74,7 +74,7 @@ dependencies = [
 [[package]]
 name = "multiversx-sc-codec-derive"
 version = "0.21.0"
-source = "git+https://github.com/multiversx/mx-sdk-rs?rev=fd6a6c862576b18359e65918b4e84068f11ace44#fd6a6c862576b18359e65918b4e84068f11ace44"
+source = "git+https://github.com/multiversx/mx-sdk-rs?rev=710ecc80fb2e909a3d564c9a586a48df82f53ebb#710ecc80fb2e909a3d564c9a586a48df82f53ebb"
 dependencies = [
  "hex",
  "proc-macro2",
@@ -85,7 +85,7 @@ dependencies = [
 [[package]]
 name = "multiversx-sc-derive"
 version = "0.53.2"
-source = "git+https://github.com/multiversx/mx-sdk-rs?rev=fd6a6c862576b18359e65918b4e84068f11ace44#fd6a6c862576b18359e65918b4e84068f11ace44"
+source = "git+https://github.com/multiversx/mx-sdk-rs?rev=710ecc80fb2e909a3d564c9a586a48df82f53ebb#710ecc80fb2e909a3d564c9a586a48df82f53ebb"
 dependencies = [
  "hex",
  "proc-macro2",
@@ -97,7 +97,7 @@ dependencies = [
 [[package]]
 name = "multiversx-sc-wasm-adapter"
 version = "0.53.2"
-source = "git+https://github.com/multiversx/mx-sdk-rs?rev=fd6a6c862576b18359e65918b4e84068f11ace44#fd6a6c862576b18359e65918b4e84068f11ace44"
+source = "git+https://github.com/multiversx/mx-sdk-rs?rev=710ecc80fb2e909a3d564c9a586a48df82f53ebb#710ecc80fb2e909a3d564c9a586a48df82f53ebb"
 dependencies = [
  "multiversx-sc",
 ]

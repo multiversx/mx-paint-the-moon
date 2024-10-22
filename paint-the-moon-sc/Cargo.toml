@@ -10,6 +10,7 @@ path = "src/paint_the_moon_sc.rs"
 
 [features]
 default = ["block-size-8"]
+block-size-4 = []
 block-size-8 = []
 block-size-16 = []
 block-size-32 = []
@@ -17,12 +18,9 @@ block-size-64 = []
 
 [dependencies.multiversx-sc]
 git = "https://github.com/multiversx/mx-sdk-rs"
-rev = "fd6a6c862576b18359e65918b4e84068f11ace44"
-
-[dev-dependencies]
-num-bigint = "0.4"
+rev = "710ecc80fb2e909a3d564c9a586a48df82f53ebb"
 
 [dev-dependencies.multiversx-sc-scenario]
 git = "https://github.com/multiversx/mx-sdk-rs"
-rev = "fd6a6c862576b18359e65918b4e84068f11ace44"
+rev = "710ecc80fb2e909a3d564c9a586a48df82f53ebb"
 

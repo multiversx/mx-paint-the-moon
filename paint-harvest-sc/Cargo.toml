@@ -10,11 +10,11 @@ path = "src/paint_harvest_sc.rs"
 
 [dependencies.multiversx-sc]
 git = "https://github.com/multiversx/mx-sdk-rs"
-rev = "fd6a6c862576b18359e65918b4e84068f11ace44"
+rev = "710ecc80fb2e909a3d564c9a586a48df82f53ebb"
 
 [dev-dependencies]
 num-bigint = "0.4"
 
 [dev-dependencies.multiversx-sc-scenario]
 git = "https://github.com/multiversx/mx-sdk-rs"
-rev = "fd6a6c862576b18359e65918b4e84068f11ace44"
+rev = "710ecc80fb2e909a3d564c9a586a48df82f53ebb"

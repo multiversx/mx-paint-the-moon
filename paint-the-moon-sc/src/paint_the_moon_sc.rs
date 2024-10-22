@@ -5,6 +5,11 @@ use multiversx_sc::imports::*;
 
 mod color;
 pub mod pixel_block;
+pub mod paint_proxy;
+
+
+#[cfg(feature = "block-size-4")]
+pub type Block = pixel_block::PixelBlock<pixel_block::PixelBlockData4>;
 
 #[cfg(feature = "block-size-8")]
 pub type Block = pixel_block::PixelBlock<pixel_block::PixelBlockData8>;
@@ -24,8 +29,6 @@ pub type Block = pixel_block::PixelBlock<pixel_block::PixelBlockData64>;
 // const MAP_SIZE_PIXELS_X: u32 = 1 << MAP_SIZE_BITS_X; // 1024
 // const MAP_SIZE_PIXELS_Y: u32 = 1 << MAP_SIZE_BITS_Y; // 512
 
-
-
 /// A very light contract containing the map points and their state.
 #[multiversx_sc::contract]
 pub trait PaintTheMoonSc {
@@ -35,10 +38,15 @@ pub trait PaintTheMoonSc {
     #[upgrade]
     fn upgrade(&self) {}
 
+    #[view]
+    fn block_size(&self) -> usize {
+        Block::size()
+    }
+
     // can paint every point white at the beginning
     #[payable("*")]
     #[endpoint]
-    fn paint(&self, x: i32, y: i32, new_color: u8) {
+    fn paint(&self, x: usize, y: usize, new_color: u8) {
         // let payment = self.call_value().single_esdt();
         // let paint_id = self.paint_id(&new_color).get();
 
@@ -60,16 +68,20 @@ pub trait PaintTheMoonSc {
         self.block_changed(block_x, block_y, &raw_block);
         raw_block_mapper.set(raw_block);
 
-
         // self.splash(point, &new_color);
         // self.color(point).set(new_color);
     }
 
     #[event("blockChanged")]
-    fn block_changed(&self, #[indexed] block_x: i32, #[indexed] block_y: i32, raw_block: &ManagedBuffer);
+    fn block_changed(
+        &self,
+        #[indexed] block_x: usize,
+        #[indexed] block_y: usize,
+        raw_block: &ManagedBuffer,
+    );
 
     #[storage_mapper("blocks")]
-    fn raw_blocks(&self, block_x: i32, block_y: i32) -> SingleValueMapper<ManagedBuffer>;
+    fn raw_blocks(&self, block_x: usize, block_y: usize) -> SingleValueMapper<ManagedBuffer>;
 
     // #[storage_mapper("paint_id")]
     // fn paint_id(&self, color: &Color) -> SingleValueMapper<TokenIdentifier>;

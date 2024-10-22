@@ -1,0 +1,15 @@
+[package]
+name = "interactor-paint-the-moon"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "interactor-paint-the-moon"
+path = "src/interactor.rs"
+
+[dependencies]
+multiversx-sc-snippets = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "710ecc80fb2e909a3d564c9a586a48df82f53ebb" }
+# common = { path = "../common" }
+toml = "0.8.6"
+
+

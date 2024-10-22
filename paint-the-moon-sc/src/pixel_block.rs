@@ -41,6 +41,7 @@ macro_rules! pixel_block_data {
     };
 }
 
+pixel_block_data!(PixelBlockData4, 2, 8);
 pixel_block_data!(PixelBlockData8, 3, 32);
 pixel_block_data!(PixelBlockData16, 4, 128);
 pixel_block_data!(PixelBlockData32, 5, 512);
@@ -64,11 +65,8 @@ impl<Data: PixelBlockData> PixelBlock<Data> {
         1 << (Data::SIZE_BITS * 2)
     }
 
-    pub fn split_coord(coord: i32) -> (i32, usize) {
-        (
-            coord.div_euclid(Data::SIZE_BITS as i32),
-            coord.rem_euclid(Data::SIZE_BITS as i32) as usize,
-        )
+    pub fn split_coord(coord: usize) -> (usize, usize) {
+        (coord / Self::size(), coord % Self::size())
     }
 
     fn raw_data_offset(x: usize, y: usize) -> usize {
@@ -105,9 +103,7 @@ impl<Data: PixelBlockData> PixelBlock<Data> {
 
     pub fn from_managed_buffer<Api: ManagedTypeApi>(buffer: &ManagedBuffer<Api>) -> Self {
         let mut block = Self::default();
-        buffer
-            .load_slice(0, block.data.raw_data_mut())
-            .unwrap_or_else(|_| Api::error_api_impl().signal_error(b"block decode length error"));
+        let _ = buffer.load_slice(0, block.data.raw_data_mut());
         block
     }
 }
@@ -141,6 +137,7 @@ mod tests {
 
     #[test]
     fn test_pixel_block_sizes() {
+        test_pixel_block_size::<PixelBlockData4>();
         test_pixel_block_size::<PixelBlockData8>();
         test_pixel_block_size::<PixelBlockData16>();
         test_pixel_block_size::<PixelBlockData32>();
