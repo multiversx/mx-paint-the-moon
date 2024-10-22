@@ -5,6 +5,7 @@ use multiversx_sc_scenario::{imports::*, ScenarioWorld};
 const CODE_PATH: MxscPath = MxscPath::new("mxsc:output/paint-the-moon-sc.wasm");
 const OWNER: TestAddress = TestAddress::new("OWNER");
 const SC_ADDRESS: TestSCAddress = TestSCAddress::new("PAINT_THE_MOON_SC");
+const TEST_TOKEN: TestTokenIdentifier = TestTokenIdentifier::new("TEST_TOKEN");
 
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();
@@ -25,12 +26,15 @@ impl PaintTheMoonTestState {
         Self { world }
     }
 
-    fn deploy_contract(&mut self) -> &mut Self {
+    fn deploy_contract(
+        &mut self,
+        setup: MultiValueEncoded<StaticApi, (TokenIdentifier<StaticApi>, Color)>,
+    ) -> &mut Self {
         self.world
             .tx()
             .from(OWNER)
             .typed(proxy)
-            .init()
+            .init(setup)
             .code(CODE_PATH)
             .new_address(SC_ADDRESS)
             .run();
@@ -58,8 +62,7 @@ impl PaintTheMoonTestState {
     }
 
     fn get_all_points(&mut self) {
-        self
-            .world
+        self.world
             .query()
             .to(SC_ADDRESS)
             .typed(proxy)
@@ -72,7 +75,9 @@ impl PaintTheMoonTestState {
 #[test]
 fn paint_the_moon_blackbox() {
     let mut state = PaintTheMoonTestState::new();
-    state.deploy_contract();
+    let mut setup = MultiValueEncoded::new();
+    setup.push((TEST_TOKEN.to_token_identifier(), Color::Red));
+    state.deploy_contract(setup);
     state.initial_map_setup();
     state.get_all_points();
 }

@@ -3,6 +3,8 @@
 use common::{Color, Config, ContractCode, PaintTheMoonScProxy, Point, Points, CONTRACT_CODE};
 use multiversx_sc_snippets::imports::*;
 
+const GREEN_TOKEN_ID: TestTokenIdentifier = TestTokenIdentifier::new("GREEN-0e161c");
+
 #[tokio::main]
 async fn main() {
     env_logger::init();
@@ -29,7 +31,10 @@ impl ContractInteract {
         }
     }
 
-    async fn deploy_paint_the_moon(&mut self) {
+    async fn deploy_paint_the_moon(
+        &mut self,
+        setup: MultiValueEncoded<StaticApi, (TokenIdentifier<StaticApi>, Color)>,
+    ) {
         let paint_the_moon_code = BytesValue::from(self.contract_code.paint_the_moon);
 
         let new_address = self
@@ -38,7 +43,7 @@ impl ContractInteract {
             .from(&self.wallet_address)
             .gas(60_000_000u64)
             .typed(PaintTheMoonScProxy)
-            .init()
+            .init(setup)
             .code(paint_the_moon_code)
             .code_metadata(CodeMetadata::UPGRADEABLE)
             .returns(ReturnsNewAddress)
@@ -89,6 +94,8 @@ impl ContractInteract {
 #[tokio::test]
 async fn test_moon_max_size() {
     let mut interact = ContractInteract::new().await;
+    let mut setup = MultiValueEncoded::new();
+    setup.push((GREEN_TOKEN_ID.to_token_identifier(), Color::Red));
     let mut points = Vec::new();
     points.extend((0..500).flat_map(|x| {
         (0..500).map(move |y| Point {
@@ -97,7 +104,7 @@ async fn test_moon_max_size() {
             color: Color::Red,
         })
     }));
-    interact.deploy_paint_the_moon().await;
+    interact.deploy_paint_the_moon(setup).await;
     interact.initial_moon_setup(Points(points)).await;
     interact.get_all_points().await;
 }
