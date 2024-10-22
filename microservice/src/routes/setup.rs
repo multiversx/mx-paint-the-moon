@@ -1,15 +1,8 @@
 use crate::redis_local::Redis;
 use actix_web::{post, Responder};
 use actix_web::{web, HttpResponse};
-use base::InteractorPrepareAsync;
-use common::{
-    DeployResponse, InitialMoonSetup, PaintHarvestDeploy, PaintHarvestScProxy, PaintTheMoonScProxy,
-    QueryResponse,
-};
-use imports::{
-    Bech32Address, BytesValue, CodeMetadata, ReturnsHandledOrError, ReturnsNewBech32Address,
-    ReturnsTxHash, TokenIdentifier,
-};
+use common::{DeployResponse, InitialMoonSetup, PaintHarvestDeploy, QueryResponse};
+use imports::MultiValueEncoded;
 use interactor::ContractInteract;
 use multiversx_sc_snippets::*;
 use redis::AsyncCommands;
@@ -18,21 +11,9 @@ use redis::AsyncCommands;
 pub async fn deploy_paint_the_moon() -> impl Responder {
     let mut contract_interact = ContractInteract::new().await;
 
-    let paint_the_moon_code = BytesValue::from(contract_interact.contract_code.paint_the_moon);
-
-    let (result, tx_hash) = contract_interact
-        .interactor
-        .tx()
-        .from(&contract_interact.wallet_address)
-        .gas(60_000_000u64)
-        .typed(PaintTheMoonScProxy)
-        .init()
-        .code(paint_the_moon_code)
-        .code_metadata(CodeMetadata::UPGRADEABLE)
-        .returns(ReturnsHandledOrError::new().returns(ReturnsNewBech32Address))
-        .returns(ReturnsTxHash)
-        .prepare_async()
-        .run()
+    //TODO: setup paint the moon req body if necessary
+    let result = contract_interact
+        .deploy_paint_the_moon(MultiValueEncoded::new())
         .await;
 
     match result {
@@ -44,8 +25,8 @@ pub async fn deploy_paint_the_moon() -> impl Responder {
             DeployResponse::new(new_address).response()
         }
         Err(err) => HttpResponse::InternalServerError().body(format!(
-            "Deploy Paint the Moon SC transaction failed with error: {:#?}. Tx hash: {:#?}",
-            err.message, tx_hash
+            "Deploy Paint the Moon SC transaction failed with error: {:#?}",
+            err.message
         )),
     }
 }
@@ -59,25 +40,7 @@ pub async fn initial_moon_setup(
     let mut con = redis_client.new_connection().await;
 
     let points = body.0.painted_points;
-
-    let (result, tx_hash) = contract_interact
-        .interactor
-        .tx()
-        .from(&contract_interact.wallet_address)
-        .to(Bech32Address::from_bech32_string(
-            contract_interact
-                .config
-                .paint_the_moon_address()
-                .to_string(),
-        ))
-        .gas(60_000_000u64)
-        .typed(PaintTheMoonScProxy)
-        .initial_map_setup(points.0.clone())
-        .returns(ReturnsHandledOrError::new())
-        .returns(ReturnsTxHash)
-        .prepare_async()
-        .run()
-        .await;
+    let result = contract_interact.initial_moon_setup(points.0.clone()).await;
 
     match result {
         Ok(_) => {
@@ -85,8 +48,8 @@ pub async fn initial_moon_setup(
             QueryResponse::new(points).response()
         }
         Err(err) => HttpResponse::InternalServerError().body(format!(
-            "Initial moon setup SC transaction failed with error: {:#?}. Tx hash: {:#?}",
-            err.message, tx_hash
+            "Initial moon setup SC transaction failed with error: {:#?}.",
+            err.message
         )),
     }
 }
@@ -95,25 +58,9 @@ pub async fn initial_moon_setup(
 pub async fn deploy_paint_harvest(body: web::Json<PaintHarvestDeploy>) -> impl Responder {
     let mut contract_interact = ContractInteract::new().await;
 
-    let paint_harvest_code = BytesValue::from(contract_interact.contract_code.paint_harvest);
     let params = body.0;
-
-    let (result, tx_hash) = contract_interact
-        .interactor
-        .tx()
-        .from(&contract_interact.wallet_address)
-        .gas(60_000_000u64)
-        .typed(PaintHarvestScProxy)
-        .init(
-            TokenIdentifier::from(&params.collection_token_id),
-            params.is_open,
-        )
-        .code(paint_harvest_code)
-        .code_metadata(CodeMetadata::UPGRADEABLE)
-        .returns(ReturnsHandledOrError::new().returns(ReturnsNewBech32Address))
-        .returns(ReturnsTxHash)
-        .prepare_async()
-        .run()
+    let result = contract_interact
+        .deploy_paint_harvest(params.collection_token_id, params.is_open)
         .await;
 
     match result {
@@ -125,8 +72,8 @@ pub async fn deploy_paint_harvest(body: web::Json<PaintHarvestDeploy>) -> impl R
             DeployResponse::new(new_address).response()
         }
         Err(err) => HttpResponse::InternalServerError().body(format!(
-            "Deploy Paint Harvest SC transaction failed with error: {:#?}. Tx hash: {:#?}",
-            err.message, tx_hash
+            "Deploy Paint Harvest SC transaction failed with error: {:#?}.",
+            err.message
         )),
     }
 }

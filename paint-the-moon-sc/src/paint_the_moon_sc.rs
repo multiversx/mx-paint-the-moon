@@ -7,7 +7,11 @@ use multiversx_sc::imports::*;
 pub trait PaintTheMoonSc {
     // endpoints
     #[init]
-    fn init(&self) {}
+    fn init(&self, setup: MultiValueEncoded<(TokenIdentifier, Color)>) {
+        for (token_id, color) in setup.into_iter() {
+            self.paint_id(&color).set(token_id)
+        }
+    }
 
     #[upgrade]
     fn upgrade(&self) {}

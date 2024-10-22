@@ -1,4 +1,6 @@
-use common::{Color, Coordinates, Points};
+use common::{Color, Config, Coordinates, Point, Points, MAX_HEIGHT, MAX_WIDTH};
+use multiversx_sc_snippets::imports::NestedDecode;
+use multiversx_sdk::utils::base64_decode;
 use redis::{AsyncCommands, RedisError};
 use serde::{Deserialize, Serialize};
 
@@ -16,7 +18,7 @@ pub trait Event {
     fn from_message_event(event: &MessageEvent) -> Option<Self>
     where
         Self: Sized;
-    fn handle_event(&self, redis_client: &Redis) -> impl std::future::Future<Output = ()> + Send;
+    async fn handle_event(&self, redis_client: &Redis);
 }
 
 impl Event for Splash {
@@ -26,6 +28,7 @@ impl Event for Splash {
 
         match result {
             Ok(mut points_cached_value) => {
+                println!("Points fetched from Redis: {:?}", points_cached_value);
                 // find the point to update
                 if let Some(point) = points_cached_value
                     .0
@@ -33,24 +36,64 @@ impl Event for Splash {
                     .find(|p| p.coordinates() == self.coordinates)
                 {
                     // update the color
+                    println!("Point found, updating color to {:?}", self.new_color);
                     point.color = self.new_color;
 
                     // save the updated points back to Redis
                     let _: () = con.set("points", &points_cached_value).await.unwrap();
+                    println!("Points updated in Redis.");
                 } else {
-                    eprintln!("Point not found for coordinates: {:?}", self.coordinates);
+                    println!("Point not found for coordinates: {:?}", self.coordinates);
                 }
             }
-            // maybe here do some logic
-            // if point is inside the map bounds and we are here
-            // that means that the key is not yet available but the point is valid
-            // reconstruct the map and create the redis key, or throw error if the point is out of bounds
-            Err(err) => eprintln!("Failed to get points from Redis: {}", err),
+            Err(err) => {
+                println!("Failed to get points from Redis: {err:?}.");
+
+                if self.coordinates.0 <= MAX_WIDTH && self.coordinates.1 <= MAX_HEIGHT {
+                    println!("Point in bounds. Saving new key {:?}..", &self.coordinates);
+
+                    //TODO: reconstruct entire map
+                    let points = vec![Point {
+                        x: self.coordinates.0,
+                        y: self.coordinates.1,
+                        color: self.new_color,
+                    }];
+
+                    let _: () = con.set("points", Points(points)).await.unwrap();
+                    println!("New points saved in Redis.");
+                }
+            }
         }
     }
 
-    // TODO: see how to identify a Splash event
-    fn from_message_event(_message_event: &MessageEvent) -> Option<Self> {
+    fn from_message_event(message_event: &MessageEvent) -> Option<Self> {
+        let config = Config::new();
+
+        if let Some(topics) = &message_event.topics {
+            if message_event.address.to_bech32_string().unwrap() == *config.paint_the_moon_address()
+                && message_event.identifier == "paint"
+            {
+                println!("Paint event found");
+                let coord_hex = String::from_utf8(base64_decode(topics[1].clone())).unwrap();
+                let new_color_hex = String::from_utf8(base64_decode(topics[2].clone())).unwrap();
+
+                let coordinates = Coordinates::dep_decode(&mut coord_hex.as_bytes());
+                let new_color = Color::dep_decode(&mut new_color_hex.as_bytes());
+
+                println!("Decoded Coordinates: {:?}", coordinates);
+                println!("Decoded Color: {:?}", new_color);
+
+                if let (Ok(coordinates), Ok(new_color)) = (coordinates, new_color) {
+                    return Some(Self {
+                        coordinates,
+                        new_color,
+                    });
+                } else {
+                    println!("Failed to decode coordinates or color");
+                }
+            }
+        }
+
         None
     }
 }
