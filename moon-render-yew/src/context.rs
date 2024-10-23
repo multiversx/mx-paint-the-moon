@@ -1,5 +1,6 @@
 use crate::requests::query;
 use common::{Config, Points};
+use gloo::timers::callback::Interval;
 use html::ChildrenProps;
 use std::{cell::RefCell, rc::Rc};
 use yew::prelude::*;
@@ -59,19 +60,27 @@ pub fn config_provider(props: &ChildrenProps) -> Html {
     let set_points_effect = set_points.clone();
     let set_config_effect = set_config.clone();
 
-    // refresh context on component mount
+    // refresh context periodically
     use_effect_with_deps(
         move |_| {
-            wasm_bindgen_futures::spawn_local(async move {
-                let (new_config, new_points) = refresh_context().await;
+            let interval = Interval::new(3_000, move || {
+                let set_points_effect = set_points_effect.clone();
+                let set_config_effect = set_config_effect.clone();
 
-                // Emit the new status inside the async block
-                set_points_effect.emit(new_points);
-                set_config_effect.emit(new_config);
+                wasm_bindgen_futures::spawn_local(async move {
+                    let (new_config, new_points) = refresh_context().await;
+                    set_points_effect.emit(new_points);
+                    set_config_effect.emit(new_config);
+                });
             });
-            || () // no cleanup fn
+
+            // cleanup fn to cancel the interval when component is unmounted
+            // drop Closure
+            move || {
+                interval.cancel();
+            }
         },
-        (), // empty dependency array, run once on mount
+        (), // run once on mount, and poll every 3 seconds
     );
 
     let context = ConfigContext {

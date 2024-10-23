@@ -25,5 +25,6 @@ getrandom = { version = "0.2", features = ["js"] }
 multiversx-sc-snippets-dapp = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "3a0c91737ef73c133c9aa95b690eba9909cb6063" }
 common = { path = "../common" }
 gloo-net = { version = "0.6.0", features = ["json"] }
+gloo = { version = "0.11.0" }
 serde = { version = "1.0", features = ["derive"] }
 serde-wasm-bindgen = { version = "0.6.5" }
