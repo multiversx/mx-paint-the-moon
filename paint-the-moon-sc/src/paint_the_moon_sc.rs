@@ -67,9 +67,6 @@ pub trait PaintTheMoonSc {
         let raw_block = block.to_managed_buffer();
         self.block_changed(block_x, block_y, &raw_block);
         raw_block_mapper.set(raw_block);
-
-        // self.splash(point, &new_color);
-        // self.color(point).set(new_color);
     }
 
     #[event("blockChanged")]
@@ -82,10 +79,4 @@ pub trait PaintTheMoonSc {
 
     #[storage_mapper("blocks")]
     fn raw_blocks(&self, block_x: usize, block_y: usize) -> SingleValueMapper<ManagedBuffer>;
-
-    // #[storage_mapper("paint_id")]
-    // fn paint_id(&self, color: &Color) -> SingleValueMapper<TokenIdentifier>;
-
-    // TODO: find a way to store the points. We will receive a 2D projection of a 3D space.
-    // Maybe it would be a good idea to not store them per se, but only their state.
 }

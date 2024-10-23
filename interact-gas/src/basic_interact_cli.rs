@@ -18,6 +18,8 @@ pub enum InteractCliCommand {
     Sizes,
     #[command(name = "paint", about = "Paint!")]
     Paint(PaintArgs),
+    #[command(name = "paint-all", about = "Paint every pixel")]
+    PaintAll,
     
 }
 

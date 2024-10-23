@@ -8,7 +8,7 @@ use std::{
 /// State file
 const STATE_FILE: &str = "state.toml";
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ContractInfo {
     pub block_size: usize,
     pub address: Bech32Address,

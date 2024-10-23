@@ -2,6 +2,8 @@ mod basic_interact_cli;
 mod basic_interact_config;
 mod basic_interact_state;
 
+use std::collections::{BTreeMap, HashMap};
+
 use crate::basic_interact_state::State;
 pub use basic_interact_config::Config;
 use basic_interact_state::ContractInfo;
@@ -12,7 +14,7 @@ use multiversx_sc_snippets::imports::*;
 
 const INTERACTOR_SCENARIO_TRACE_PATH: &str = "interactor_trace.scen.json";
 
-const BLOCK_SIZES: &[usize] = &[4, 8, 16, 32, 64];
+const BLOCK_SIZES: &[usize] = &[4, 8, 16, 32];
 
 pub async fn adder_cli() {
     env_logger::init();
@@ -30,12 +32,11 @@ pub async fn adder_cli() {
             basic_interact.print_sizes().await;
         }
         Some(basic_interact_cli::InteractCliCommand::Paint(_args)) => {
-            basic_interact.paint().await;
+            basic_interact.paint_one().await;
         }
-        // Some(basic_interact_cli::InteractCliCommand::Sum) => {
-        //     let sum = basic_interact.get_sum().await;
-        //     println!("sum: {sum}");
-        // },
+        Some(basic_interact_cli::InteractCliCommand::PaintAll) => {
+            basic_interact.paint_all().await;
+        }
         _ => {}
     }
 }
@@ -87,7 +88,7 @@ impl AdderInteract {
                     .typed(paint_proxy::PaintTheMoonScProxy)
                     .init()
                     .code(MxscPath::new(&code_path))
-                    .gas(8_000_000)
+                    .gas(10_000_000)
                     .returns(ReturnsNewBech32Address)
             });
         }
@@ -127,46 +128,102 @@ impl AdderInteract {
         }
     }
 
-    pub async fn paint(&mut self) {
+    pub async fn paint_one(&mut self) {
         self.set_state().await;
 
         let mut buffer = self.interactor.homogenous_call_buffer();
         for contract_info in &self.state.contract_info_list {
             let gas = match contract_info.block_size {
-                64 => 10_000_000,
-                32 => 10_000_000,
-                _ => 10_000_000,
+                64 => 25_000_000,
+                32 => 7_000_000,
+                _ => 5_000_000,
             };
+            // let gas = 3_000_000;
             buffer.push_tx(|tx| {
                 tx.from(&self.owner_address)
                     .to(&contract_info.address)
                     .typed(paint_proxy::PaintTheMoonScProxy)
-                    .paint(512u32, 256u32, 1)
+                    .paint(100u32, 100u32, 2)
                     .gas(gas)
+                    .returns(PassValue(contract_info.clone()))
                     .returns(ReturnsGasUsed)
             });
         }
 
-        let gas_used_list = buffer.run().await;
-        for (i, contract_info) in self.state.contract_info_list.iter().enumerate() {
+        let result = buffer.run().await;
+        for (contract_info, gas_used) in result {
             println!(
                 "block size {:2} paint 1 gas used {:8}",
-                contract_info.block_size, gas_used_list[i]
+                contract_info.block_size, gas_used
             );
         }
     }
 
-    // pub async fn add(&mut self, value: u32) {
-    //     self.interactor
-    //         .tx()
-    //         .from(&self.wallet_address)
-    //         .to(self.state.current_adder_address())
-    //         .gas(6_000_000)
-    //         .typed(adder_proxy::AdderProxy)
-    //         .add(value)
-    //         .run()
-    //         .await;
+    pub async fn paint_all(&mut self) {
+        use std::io::Write;
 
-    //     println!("successfully performed add");
-    // }
+        self.set_state().await;
+
+        let mut gas_report_raw = std::fs::File::create("gas-report-raw.csv").unwrap();
+        let mut gas_report_group = std::fs::File::create("gas-report-group.csv").unwrap();
+
+        const STEP: usize = 16;
+        let max_x: usize = 1024;
+        let max_y: usize = 512;
+
+        let start_time = std::time::Instant::now();
+
+        for x in 0..max_x {
+            let mut current_y = 0;
+            let mut next_y = 0;
+            while next_y < max_y {
+                next_y += STEP;
+
+                let current_batch_time = std::time::Instant::now();
+
+                print!("points:");
+                let mut buffer = self.interactor.homogenous_call_buffer();
+                for y in current_y..next_y {
+                    for contract_info in self.state.contract_info_list.iter() {
+                        buffer.push_tx(|tx| {
+                            tx.from(&self.owner_address)
+                                .to(&contract_info.address)
+                                .typed(paint_proxy::PaintTheMoonScProxy)
+                                .paint(x, y, 2)
+                                .gas(8_000_000)
+                                .returns(PassValue(x))
+                                .returns(PassValue(y))
+                                .returns(PassValue(contract_info.block_size))
+                                .returns(ReturnsHandledOrError::new().returns(ReturnsGasUsed))
+                        });
+                    }
+                    print!(" ({x}, {y})");
+                }
+                println!();
+
+                let result = buffer.run().await;
+
+                let mut buffer = HashMap::<String, BTreeMap<usize, u64>>::new();
+                for (x, y, block_size, gas_result) in result {
+                    let gas_used = gas_result.unwrap_or_default();
+                    writeln!(gas_report_raw, "{x},{y},{block_size},{gas_used}",).unwrap();
+
+                    let x_y_label = format!("\"({x}, {y})\"");
+                    let line = buffer.entry(x_y_label.clone()).or_default();
+                    line.insert(block_size, gas_used);
+                    if line.len() == BLOCK_SIZES.len() {
+                        write!(gas_report_group, "{x_y_label}").unwrap();
+                        for block_size in BLOCK_SIZES {
+                            write!(gas_report_group, ",{}", line[block_size]).unwrap();
+                        }
+                        writeln!(gas_report_group).unwrap();
+                    }
+                }
+
+                println!("Elapsed from start: {:?}", start_time.elapsed());
+                println!("Elapsed for batch:  {:?}", current_batch_time.elapsed());
+                current_y = next_y;
+            }
+        }
+    }
 }

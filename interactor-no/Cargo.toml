@@ -8,7 +8,7 @@ name = "interactor-paint-the-moon"
 path = "src/interactor.rs"
 
 [dependencies]
-multiversx-sc-snippets = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "710ecc80fb2e909a3d564c9a586a48df82f53ebb" }
+multiversx-sc-snippets = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "55f97ecb4d496461bf3517dee7977a8b6659edd0" }
 # common = { path = "../common" }
 toml = "0.8.6"
 
