@@ -22,6 +22,7 @@ struct PaintTheMoonTestState {
 impl PaintTheMoonTestState {
     fn new() -> Self {
         let mut world = world();
+        world.start_trace();
 
         world
             .account(OWNER)
@@ -30,7 +31,6 @@ impl PaintTheMoonTestState {
             .esdt_balance(WRONG_TOKEN, 1000)
             .esdt_nft_balance(NFT_TOKEN, 1, 10, ManagedBuffer::new());
 
-        world.start_trace();
         Self { world }
     }
 
