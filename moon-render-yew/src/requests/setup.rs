@@ -1,7 +1,6 @@
 use super::post_request;
-use common::{
-    Config, DeployResponse, InitialMoonSetup, Points, QueryResponse, Routes, SetupRoutes,
-};
+use common::{Config, DeployResponse, InitialMoonSetup, Points, Routes, SetupRoutes};
+use common_wasm::QueryResponseWasm;
 use multiversx_sc_snippets_dapp::imports::Bech32Address;
 
 pub async fn deploy_paint_the_moon(config: &Config) -> Result<Bech32Address, String> {
@@ -31,7 +30,7 @@ pub async fn _initial_moon_setup(
     let deploy_body = InitialMoonSetup::new(painted_points);
     let formatted_body = serde_wasm_bindgen::to_value(&deploy_body).unwrap();
 
-    let response = post_request::<QueryResponse<Points>>(&dest, Some(formatted_body)).await;
+    let response = post_request::<QueryResponseWasm<Points>>(&dest, Some(formatted_body)).await;
 
     match response {
         Ok(query_response) => Ok(query_response.response()),

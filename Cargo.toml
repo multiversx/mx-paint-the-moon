@@ -3,6 +3,8 @@ resolver = "2"
 
 members = [
     "common",
+    "common-wasm",
+    "common-non-wasm",
 
     "paint-harvest-sc",
     "paint-harvest-sc/meta",

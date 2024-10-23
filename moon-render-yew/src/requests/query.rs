@@ -1,5 +1,6 @@
 use super::get_request;
-use common::{Config, Points, QueryResponse, QueryRoutes, Routes};
+use common::{Config, Points, QueryRoutes, Routes};
+use common_wasm::{ConfigWasm, QueryResponseWasm};
 
 pub async fn get_all_points(config: &Config) -> Result<Points, String> {
     let dest = format!(
@@ -17,13 +18,13 @@ pub async fn get_all_points(config: &Config) -> Result<Points, String> {
 
 pub async fn get_config() -> Result<Config, String> {
     // take microservice url from file
-    let config = Config::new();
+    let config = ConfigWasm::new();
     let dest = format!(
         "{}{}",
-        config.microservice_url(),
+        config.inner().microservice_url(),
         &Routes::Query(QueryRoutes::GetConfig).as_str()
     );
-    let response = get_request::<QueryResponse<Config>>(&dest).await;
+    let response = get_request::<QueryResponseWasm<Config>>(&dest).await;
 
     match response {
         Ok(config) => Ok(config.response()),

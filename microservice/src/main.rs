@@ -1,6 +1,6 @@
 use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
-use common::Config;
+use common_non_wasm::ConfigNonWasm;
 use rabbit_mq::{RabbitMq, Splash};
 use redis_local::Redis;
 use routes::{query_configuration, setup_configuration};
@@ -11,10 +11,10 @@ mod routes;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let config = Config::new();
-    println!("{:#?}", config);
+    let config = ConfigNonWasm::new();
+    println!("{:#?}", config.inner());
 
-    let mut redis = Redis::new(&config).await;
+    let mut redis = Redis::new(config.inner()).await;
 
     redis.flush_all().await;
 

@@ -1,5 +1,6 @@
 use crate::requests::query;
 use common::{Config, Points};
+use common_wasm::ConfigWasm;
 use gloo::timers::callback::Interval;
 use html::ChildrenProps;
 use std::{cell::RefCell, rc::Rc};
@@ -8,16 +9,16 @@ use yew::prelude::*;
 #[derive(Clone, Debug, PartialEq)]
 pub struct ConfigContext {
     pub points: Points,
-    pub config: Rc<RefCell<Config>>,
+    pub config: Rc<RefCell<ConfigWasm>>,
     pub set_points: Callback<Points>,
-    pub set_config: Callback<Config>,
+    pub set_config: Callback<ConfigWasm>,
 }
 
 impl Default for ConfigContext {
     fn default() -> Self {
         ConfigContext {
             points: Points::default(),
-            config: Rc::new(RefCell::new(Config::new())),
+            config: Rc::new(RefCell::new(ConfigWasm::new())),
             set_points: Callback::noop(),
             set_config: Callback::noop(),
         }
@@ -40,7 +41,7 @@ pub async fn refresh_context() -> (Config, Points) {
 #[function_component(ConfigProvider)]
 pub fn config_provider(props: &ChildrenProps) -> Html {
     let points = use_state(Points::default);
-    let config = use_state(Config::new);
+    let config = use_state(ConfigWasm::new);
 
     let set_points = {
         let points = points.clone();
@@ -51,7 +52,7 @@ pub fn config_provider(props: &ChildrenProps) -> Html {
 
     let set_config = {
         let config = config.clone();
-        Callback::from(move |new_config: Config| {
+        Callback::from(move |new_config: ConfigWasm| {
             config.set(new_config);
         })
     };
@@ -70,7 +71,7 @@ pub fn config_provider(props: &ChildrenProps) -> Html {
                 wasm_bindgen_futures::spawn_local(async move {
                     let (new_config, new_points) = refresh_context().await;
                     set_points_effect.emit(new_points);
-                    set_config_effect.emit(new_config);
+                    set_config_effect.emit(ConfigWasm(new_config));
                 });
             });
 

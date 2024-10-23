@@ -1,4 +1,5 @@
-use common::{Color, Config, Coordinates, Point, Points, MAX_HEIGHT, MAX_WIDTH};
+use common::{Color, Coordinates, Point, MAX_HEIGHT, MAX_WIDTH};
+use common_non_wasm::{ConfigNonWasm, PointsNonWasm};
 use multiversx_sc_snippets::imports::NestedDecode;
 use multiversx_sdk::utils::base64_decode;
 use redis::{AsyncCommands, RedisError};
@@ -24,7 +25,7 @@ pub trait Event {
 impl Event for Splash {
     async fn handle_event(&self, redis_client: &Redis) {
         let mut con = redis_client.new_connection().await;
-        let result: Result<Points, RedisError> = con.get("points").await;
+        let result: Result<PointsNonWasm, RedisError> = con.get("points").await;
 
         match result {
             Ok(mut points_cached_value) => {
@@ -59,7 +60,7 @@ impl Event for Splash {
                         color: self.new_color,
                     }];
 
-                    let _: () = con.set("points", Points(points)).await.unwrap();
+                    let _: () = con.set("points", PointsNonWasm(points)).await.unwrap();
                     println!("New points saved in Redis.");
                 }
             }
@@ -67,7 +68,7 @@ impl Event for Splash {
     }
 
     fn from_message_event(message_event: &MessageEvent) -> Option<Self> {
-        let config = Config::new();
+        let config = ConfigNonWasm::new().inner().clone();
 
         if let Some(topics) = &message_event.topics {
             if message_event.address.to_bech32_string().unwrap() == *config.paint_the_moon_address()

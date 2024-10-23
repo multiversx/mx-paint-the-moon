@@ -1,11 +1,10 @@
-use crate::redis_local::Redis;
 use actix_web::{post, Responder};
 use actix_web::{web, HttpResponse};
-use common::{DeployResponse, InitialMoonSetup, PaintHarvestDeploy, QueryResponse};
+use common::PaintHarvestDeploy;
+use common_non_wasm::DeployResponseNonWasm;
 use imports::MultiValueEncoded;
 use interactor::ContractInteract;
 use multiversx_sc_snippets::*;
-use redis::AsyncCommands;
 
 #[post("/deploy_paint_the_moon")]
 pub async fn deploy_paint_the_moon() -> impl Responder {
@@ -22,7 +21,7 @@ pub async fn deploy_paint_the_moon() -> impl Responder {
                 .config
                 .set_paint_the_moon_address(new_address.to_bech32_string());
 
-            DeployResponse::new(new_address).response()
+            DeployResponseNonWasm::new(new_address).response()
         }
         Err(err) => HttpResponse::InternalServerError().body(format!(
             "Deploy Paint the Moon SC transaction failed with error: {:#?}",
@@ -31,28 +30,28 @@ pub async fn deploy_paint_the_moon() -> impl Responder {
     }
 }
 
-#[post("/initial_moon_setup")]
-pub async fn initial_moon_setup(
-    body: web::Json<InitialMoonSetup>,
-    redis_client: web::Data<Redis>,
-) -> impl Responder {
-    let mut contract_interact = ContractInteract::new().await;
-    let mut con = redis_client.new_connection().await;
+// #[post("/initial_moon_setup")]
+// pub async fn initial_moon_setup(
+//     body: web::Json<InitialMoonSetup>,
+//     redis_client: web::Data<Redis>,
+// ) -> impl Responder {
+//     let mut contract_interact = ContractInteract::new().await;
+//     let mut con = redis_client.new_connection().await;
 
-    let points = body.0.painted_points;
-    let result = contract_interact.initial_moon_setup(points.0.clone()).await;
+//     let points = body.0.painted_points;
+//     let result = contract_interact.initial_moon_setup(points.0.clone()).await;
 
-    match result {
-        Ok(_) => {
-            let _: () = con.set("points", &points).await.unwrap();
-            QueryResponse::new(points).response()
-        }
-        Err(err) => HttpResponse::InternalServerError().body(format!(
-            "Initial moon setup SC transaction failed with error: {:#?}.",
-            err.message
-        )),
-    }
-}
+//     match result {
+//         Ok(_) => {
+//             let _: () = con.set("points", &points).await.unwrap();
+//             QueryResponseNonWasm::new(points).response()
+//         }
+//         Err(err) => HttpResponse::InternalServerError().body(format!(
+//             "Initial moon setup SC transaction failed with error: {:#?}.",
+//             err.message
+//         )),
+//     }
+// }
 
 #[post("/deploy_paint_harvest")]
 pub async fn deploy_paint_harvest(body: web::Json<PaintHarvestDeploy>) -> impl Responder {
@@ -69,7 +68,7 @@ pub async fn deploy_paint_harvest(body: web::Json<PaintHarvestDeploy>) -> impl R
                 .config
                 .set_paint_harvest_address(new_address.to_bech32_string());
 
-            DeployResponse::new(new_address).response()
+            DeployResponseNonWasm::new(new_address).response()
         }
         Err(err) => HttpResponse::InternalServerError().body(format!(
             "Deploy Paint Harvest SC transaction failed with error: {:#?}.",
@@ -80,6 +79,6 @@ pub async fn deploy_paint_harvest(body: web::Json<PaintHarvestDeploy>) -> impl R
 
 pub fn setup_configuration(cfg: &mut web::ServiceConfig) {
     cfg.service(deploy_paint_the_moon)
-        .service(initial_moon_setup)
+        // .service(initial_moon_setup)
         .service(deploy_paint_harvest);
 }

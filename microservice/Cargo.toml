@@ -8,6 +8,7 @@ actix-cors = "0.7"
 actix-rt = { version = "2.10.0" }
 actix-web = "4.9.0"
 common = { path = "../common" }
+common-non-wasm = { path = "../common-non-wasm" }
 futures = { version = "0.3.31" }
 interactor = { path = "src/interactor" }
 lapin = { version = "2.5.0" }

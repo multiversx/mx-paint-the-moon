@@ -26,7 +26,7 @@ pub fn admin_panel() -> Html {
 
             wasm_bindgen_futures::spawn_local(async move {
                 let config = config.borrow().clone();
-                match setup::deploy_paint_the_moon(&config).await {
+                match setup::deploy_paint_the_moon(config.inner()).await {
                     Ok(result) => {
                         deploy_response.set(format!(
                             "New deployed address: {}",
