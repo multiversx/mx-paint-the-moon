@@ -1,0 +1,33 @@
+[settings]
+main = "main"
+
+[contracts.main]
+name = "paint-the-moon-main"
+
+[contracts.block4]
+name = "paint-the-moon-4"
+default-features = false
+features = ["block-size-4"]
+
+[contracts.block8]
+name = "paint-the-moon-8"
+default-features = false
+features = ["block-size-8"]
+
+[contracts.block16]
+name = "paint-the-moon-16"
+default-features = false
+features = ["block-size-16"]
+
+[contracts.block32]
+name = "paint-the-moon-32"
+default-features = false
+features = ["block-size-32"]
+
+[contracts.block64]
+name = "paint-the-moon-64"
+default-features = false
+features = ["block-size-64"]
+
+[[proxy]]
+path = "src/paint_proxy.rs"

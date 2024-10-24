@@ -2,6 +2,8 @@
 resolver = "2"
 
 members = [
+    "interact-gas",
+
     "paint-harvest-sc",
     "paint-harvest-sc/meta",
 

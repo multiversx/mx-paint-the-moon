@@ -1,2 +1,5 @@
-checker.bmp
-rendered.bmp
+**/target/**
+**/output/**
+**/Cargo.lock
+
+rendered*
