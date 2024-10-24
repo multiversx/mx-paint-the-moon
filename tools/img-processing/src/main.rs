@@ -29,7 +29,7 @@ fn process_moon() -> anyhow::Result<()> {
 }
 
 fn render_checker() -> anyhow::Result<()> {
-    let _ = sphere::generate_checker(1000, 500).save("checker.bmp")?;
+    sphere::generate_checker(1000, 500).save("checker.bmp")?;
     Ok(())
 }
 
@@ -54,7 +54,7 @@ fn render_moon(size: u32, long0: f32) -> anyhow::Result<()> {
 fn sphere(size: u32, long0: f32, source: &DynamicImage) -> anyhow::Result<()> {
     let mut rendered = DynamicImage::new(size, size, ColorType::Rgb8);
 
-    sphere::render_sphere(size, long0, &source, |x, y, r, g, b| {
+    sphere::render_sphere(size, long0, source, |x, y, r, g, b| {
         rendered.put_pixel(x, y, [r, g, b, 255u8].into());
         Result::<(), Infallible>::Ok(())
     });

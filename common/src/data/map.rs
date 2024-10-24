@@ -31,6 +31,22 @@ pub enum Color {
     Grey,
 }
 
+// TODO: replace these with actual token identifiers
+impl Color {
+    pub fn to_token_id(&self) -> &str {
+        match self {
+            Color::White => "WHITE-0123",
+            Color::Black => "BLACK-0123",
+            Color::Blue => "BLUE-0123",
+            Color::Red => "RED-0123",
+            Color::Yellow => "YELLOW-0123",
+            Color::Green => "GREEN-0e161c",
+            Color::Purple => "PURPLE-0123",
+            Color::Grey => "GREY-0123",
+        }
+    }
+}
+
 #[type_abi]
 #[derive(
     Serialize,

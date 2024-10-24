@@ -1,19 +1,19 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::pages::{AdminPage, Dashboard};
+use crate::pages::Dashboard;
 
 #[derive(Clone, Routable, PartialEq)]
 pub enum Route {
     #[at("/")]
     Home,
-    #[at("/admin")]
-    Admin,
+    #[at("/harvest")]
+    HarvestCenter,
 }
 
 pub fn switch(route: Route) -> Html {
     match route {
         Route::Home => html! { <Dashboard /> },
-        Route::Admin => html! { <AdminPage /> },
+        Route::HarvestCenter => html! {},
     }
 }

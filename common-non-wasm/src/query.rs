@@ -1,6 +1,5 @@
 use actix_web::HttpResponse;
-use common::{DeployResponse, Point, QueryResponse, QueryResponseTypes};
-use multiversx_sc_snippets::imports::Bech32Address;
+use common::{Point, QueryResponse, QueryResponseTypes};
 use redis::{FromRedisValue, ToRedisArgs};
 use serde::{Deserialize, Serialize};
 
@@ -69,15 +68,3 @@ impl<T: QueryResponseTypes + Serialize> QueryResponseNonWasm<T> {
 }
 
 impl QueryResponseTypes for PointsNonWasm {}
-
-pub struct DeployResponseNonWasm(DeployResponse);
-
-impl DeployResponseNonWasm {
-    pub fn new(new_address: Bech32Address) -> Self {
-        Self(DeployResponse::new(new_address))
-    }
-
-    pub fn response(self) -> HttpResponse {
-        HttpResponse::Ok().json(&self.0)
-    }
-}

@@ -75,8 +75,10 @@ impl Event for Splash {
                 && message_event.identifier == "paint"
             {
                 println!("Paint event found");
-                let coord_hex = String::from_utf8(base64_decode(topics[1].clone())).unwrap();
-                let new_color_hex = String::from_utf8(base64_decode(topics[2].clone())).unwrap();
+                let coord_hex =
+                    String::from_utf8_lossy(&base64_decode(topics[1].clone())).into_owned();
+                let new_color_hex =
+                    String::from_utf8_lossy(&base64_decode(topics[2].clone())).into_owned();
 
                 let coordinates = Coordinates::dep_decode(&mut coord_hex.as_bytes());
                 let new_color = Color::dep_decode(&mut new_color_hex.as_bytes());

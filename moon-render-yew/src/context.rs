@@ -1,4 +1,4 @@
-use crate::requests::query;
+use crate::requests::{get_all_points, get_config};
 use common::{Config, Points};
 use common_wasm::ConfigWasm;
 use gloo::timers::callback::Interval;
@@ -28,11 +28,11 @@ impl Default for ConfigContext {
 pub async fn refresh_context() -> (Config, Points) {
     log::info!("refreshing context");
     // get config from call to the microservice
-    let new_config = query::get_config().await.unwrap_or_default();
+    let new_config = get_config().await.unwrap_or_default();
 
     log::info!("new config in context {new_config:#?}");
 
-    let points = query::get_all_points(&new_config).await.unwrap_or_default();
+    let points = get_all_points(&new_config).await.unwrap_or_default();
     // reconstruct entire map (make rest of the points white)
     // or receive it already reconstructed from the microservice
     (new_config, points)

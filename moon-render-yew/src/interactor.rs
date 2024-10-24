@@ -33,6 +33,11 @@ impl ContractInteract {
             .gas(5_000_000u64)
             .typed(PaintTheMoonScProxy)
             .paint(point)
+            .single_esdt(
+                &point.color.to_token_id().into(),
+                0u64,
+                &BigUint::from(1u64),
+            )
             .prepare_async()
             .run()
             .await;

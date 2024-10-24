@@ -3,7 +3,7 @@ use actix_web::{web, App, HttpServer};
 use common_non_wasm::ConfigNonWasm;
 use rabbit_mq::{RabbitMq, Splash};
 use redis_local::Redis;
-use routes::{query_configuration, setup_configuration};
+use routes::query_configuration;
 
 mod rabbit_mq;
 mod redis_local;
@@ -42,7 +42,6 @@ async fn main() -> std::io::Result<()> {
                     .supports_credentials(),
             )
             .app_data(web::Data::new(redis.clone()))
-            .service(web::scope("/setup").configure(setup_configuration))
             .service(web::scope("/query").configure(query_configuration))
     })
     .bind("127.0.0.1:8089")?

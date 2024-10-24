@@ -94,40 +94,40 @@ pub fn map() -> Html {
     };
 
     // recolor specific pixels
-    let recolor_image = {
-        let canvas_ref = canvas_ref.clone();
-        let pixels_ref = pixels_ref.clone();
-        Callback::from(move |_| {
-            let canvas = canvas_ref.cast::<HtmlCanvasElement>().unwrap();
-            let context = canvas
-                .get_context("2d")
-                .unwrap()
-                .unwrap()
-                .dyn_into::<CanvasRenderingContext2d>()
-                .unwrap();
+    // let recolor_image = {
+    //     let canvas_ref = canvas_ref.clone();
+    //     let pixels_ref = pixels_ref.clone();
+    //     Callback::from(move |_| {
+    //         let canvas = canvas_ref.cast::<HtmlCanvasElement>().unwrap();
+    //         let context = canvas
+    //             .get_context("2d")
+    //             .unwrap()
+    //             .unwrap()
+    //             .dyn_into::<CanvasRenderingContext2d>()
+    //             .unwrap();
 
-            let mut pixels = (*pixels_ref).clone();
+    //         let mut pixels = (*pixels_ref).clone();
 
-            // modify specific pixels (e.g: recolor only the top-left 100x100 pixels)
-            for i in (0..100 * 100 * 4).step_by(4) {
-                pixels[i] = 0; // R
-                pixels[i + 1] = 255; // G
-                pixels[i + 2] = 0; // B
-                pixels[i + 3] = 255; // A
-            }
+    //         // modify specific pixels (e.g: recolor only the top-left 100x100 pixels)
+    //         for i in (0..100 * 100 * 4).step_by(4) {
+    //             pixels[i] = 0; // R
+    //             pixels[i + 1] = 255; // G
+    //             pixels[i + 2] = 0; // B
+    //             pixels[i + 3] = 255; // A
+    //         }
 
-            // create new ImageData from modified pixel array
-            let new_image_data = web_sys::ImageData::new_with_u8_clamped_array_and_sh(
-                wasm_bindgen::Clamped(&pixels),
-                canvas.width(),
-                canvas.height(),
-            )
-            .unwrap();
+    //         // create new ImageData from modified pixel array
+    //         let new_image_data = web_sys::ImageData::new_with_u8_clamped_array_and_sh(
+    //             wasm_bindgen::Clamped(&pixels),
+    //             canvas.width(),
+    //             canvas.height(),
+    //         )
+    //         .unwrap();
 
-            // draw new ImageData to canvas
-            context.put_image_data(&new_image_data, 0.0, 0.0).unwrap();
-        })
-    };
+    //         // draw new ImageData to canvas
+    //         context.put_image_data(&new_image_data, 0.0, 0.0).unwrap();
+    //     })
+    // };
 
     html! {
         <>
@@ -136,7 +136,7 @@ pub fn map() -> Html {
             <div class = "map-container">
             <canvas ref={canvas_ref} width={format!("{}", MAX_WIDTH)} height={format!("{}", MAX_HEIGHT)}></canvas>
             </div>
-            <button onclick={recolor_image}>{ "Recolor Image" }</button>
+            // <Button name = "Recolor image" class_name = "transaction-btn" button_type = "button" on_click={recolor_image}/>
         </div>
         </>
     }

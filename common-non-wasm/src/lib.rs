@@ -2,4 +2,4 @@ mod config;
 mod query;
 
 pub use config::ConfigNonWasm;
-pub use query::{DeployResponseNonWasm, PointsNonWasm, QueryResponseNonWasm};
+pub use query::{PointsNonWasm, QueryResponseNonWasm};
