@@ -2,17 +2,19 @@ mod basic_interact_cli;
 mod basic_interact_config;
 mod basic_interact_state;
 
-use std::collections::{BTreeMap, HashMap};
+use std::{
+    collections::{BTreeMap, HashMap},
+    fs::OpenOptions,
+};
 
 use crate::basic_interact_state::State;
 pub use basic_interact_config::Config;
 use basic_interact_state::ContractInfo;
 use clap::Parser;
-use paint_the_moon_sc::paint_proxy;
-
 use multiversx_sc_snippets::imports::*;
-
-const INTERACTOR_SCENARIO_TRACE_PATH: &str = "interactor_trace.scen.json";
+use paint_the_moon_sc::paint_proxy;
+use rand::Rng;
+use std::io::Write;
 
 const BLOCK_SIZES: &[usize] = &[4, 8, 16, 32];
 
@@ -37,6 +39,12 @@ pub async fn adder_cli() {
         Some(basic_interact_cli::InteractCliCommand::PaintAll) => {
             basic_interact.paint_all().await;
         }
+        Some(basic_interact_cli::InteractCliCommand::PaintRectangles) => {
+            basic_interact.paint_rectangles().await;
+        }
+        Some(basic_interact_cli::InteractCliCommand::PaintRand) => {
+            basic_interact.paint_rand().await;
+        }
         _ => {}
     }
 }
@@ -50,10 +58,8 @@ pub struct AdderInteract {
 
 impl AdderInteract {
     pub async fn init(config: Config) -> Self {
-        let mut interactor = Interactor::new(config.gateway_uri(), config.use_chain_simulator())
-            .await
-            .with_tracer(INTERACTOR_SCENARIO_TRACE_PATH)
-            .await;
+        let mut interactor =
+            Interactor::new(config.gateway_uri(), config.use_chain_simulator()).await;
 
         let owner_address = interactor
             .register_wallet(Wallet::from_pem_file("paint-owner.pem").unwrap())
@@ -160,8 +166,6 @@ impl AdderInteract {
     }
 
     pub async fn paint_all(&mut self) {
-        use std::io::Write;
-
         self.set_state().await;
 
         let mut gas_report_raw = std::fs::File::create("gas-report-raw.csv").unwrap();
@@ -224,6 +228,139 @@ impl AdderInteract {
                 println!("Elapsed for batch:  {:?}", current_batch_time.elapsed());
                 current_y = next_y;
             }
+        }
+    }
+
+    pub async fn paint_rand(&mut self) {
+        self.set_state().await;
+
+        let mut rand_report_raw = OpenOptions::new()
+            .write(true)
+            .append(true)
+            .open("rand-report-raw.csv")
+            .unwrap();
+        let mut rand_report_group = OpenOptions::new()
+            .write(true)
+            .append(true)
+            .open("rand-report-group.csv")
+            .unwrap();
+
+        const STEP: usize = 16;
+        let max_x: usize = 1024;
+        let max_y: usize = 512;
+
+        let start_time = std::time::Instant::now();
+        let mut rng = rand::thread_rng();
+
+        for i in 0..usize::MAX {
+            let current_batch_time = std::time::Instant::now();
+
+            let mut buffer = self.interactor.homogenous_call_buffer();
+            for _ in 0..STEP {
+                let x = rng.gen_range(0..max_x);
+                let y = rng.gen_range(0..max_y);
+
+                for contract_info in self.state.contract_info_list.iter() {
+                    buffer.push_tx(|tx| {
+                        tx.from(&self.owner_address)
+                            .to(&contract_info.address)
+                            .typed(paint_proxy::PaintTheMoonScProxy)
+                            .paint(x, y, rng.gen_range(0..16u8))
+                            .gas(8_000_000)
+                            .returns(PassValue(x))
+                            .returns(PassValue(y))
+                            .returns(PassValue(contract_info.block_size))
+                            .returns(ReturnsHandledOrError::new().returns(ReturnsGasUsed))
+                    });
+                }
+            }
+
+            let result = buffer.run().await;
+
+            let mut buffer = HashMap::<String, BTreeMap<usize, u64>>::new();
+            for (x, y, block_size, gas_result) in result {
+                let gas_used = gas_result.unwrap_or_default();
+                writeln!(rand_report_raw, "{x},{y},{block_size},{gas_used}",).unwrap();
+
+                let x_y_label = format!("\"({x}, {y})\"");
+                let line = buffer.entry(x_y_label.clone()).or_default();
+                line.insert(block_size, gas_used);
+                if line.len() == BLOCK_SIZES.len() {
+                    write!(rand_report_group, "{x_y_label}").unwrap();
+                    for block_size in BLOCK_SIZES {
+                        write!(rand_report_group, ",{}", line[block_size]).unwrap();
+                    }
+                    writeln!(rand_report_group).unwrap();
+                }
+            }
+
+            println!("#{i} Elapsed from start: {:?}", start_time.elapsed());
+            println!(
+                "#{i} Elapsed for batch:  {:?}",
+                current_batch_time.elapsed()
+            );
+        }
+    }
+
+    pub async fn paint_rectangles(&mut self) {
+        self.set_state().await;
+
+        let mut rect_report_raw = std::fs::File::create("rect-report-raw.csv").unwrap();
+
+        const STEP: usize = 32;
+        let max_x: usize = 1024;
+        let max_y: usize = 512;
+
+        let start_time = std::time::Instant::now();
+
+        let mut current_x = 0;
+        let mut next_x = 0;
+        while next_x < max_x {
+            next_x += STEP;
+
+            let mut current_y = 0;
+            let mut next_y = 0;
+            while next_y < max_y {
+                next_y += STEP;
+
+                let current_batch_time = std::time::Instant::now();
+
+                print!("points:");
+                let mut buffer = self.interactor.homogenous_call_buffer();
+                for contract_info in self.state.contract_info_list.iter() {
+                    buffer.push_tx(|tx| {
+                        tx.from(&self.owner_address)
+                            .to(&contract_info.address)
+                            .typed(paint_proxy::PaintTheMoonScProxy)
+                            .paint_rect(current_x, current_y, next_x, next_y, 5)
+                            .gas(20_000_000)
+                            .returns(PassValue(current_x))
+                            .returns(PassValue(next_x))
+                            .returns(PassValue(current_y))
+                            .returns(PassValue(next_y))
+                            .returns(PassValue(contract_info.block_size))
+                            .returns(ReturnsHandledOrError::new().returns(ReturnsGasUsed))
+                    });
+                }
+                print!(" ({current_x} .. {next_x}, {current_y} .. {next_y})");
+                println!();
+
+                let result = buffer.run().await;
+
+                for (current_x, next_x, current_y, next_y, block_size, gas_result) in result {
+                    let gas_used = gas_result.unwrap_or_default();
+
+                    let x_y_label =
+                        format!("\"({current_x}, {current_y}) -> ({next_x}, {next_y})\"");
+                    writeln!(rect_report_raw, "{x_y_label},{block_size},{gas_used}",).unwrap();
+                }
+
+                println!("Elapsed from start: {:?}", start_time.elapsed());
+                println!("Elapsed for batch:  {:?}", current_batch_time.elapsed());
+                current_y = next_y;
+            }
+
+            current_x = next_x;
         }
     }
 }

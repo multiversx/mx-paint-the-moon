@@ -20,6 +20,10 @@ pub enum InteractCliCommand {
     Paint(PaintArgs),
     #[command(name = "paint-all", about = "Paint every pixel")]
     PaintAll,
+    #[command(name = "paint-rect", about = "Paint rectangle by rectangle")]
+    PaintRectangles,
+    #[command(name = "paint-rand", about = "Paint random points")]
+    PaintRand,
     
 }
 
