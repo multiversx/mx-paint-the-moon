@@ -11,6 +11,7 @@ members = [
 
     "paint-the-moon-sc",
     "paint-the-moon-sc/meta",
+    "interactor",
 
     "moon-render-yew",
 
