@@ -6,9 +6,9 @@
 
 // Init:                                 1
 // Upgrade:                              1
-// Endpoints:                            0
-// Async Callback (empty):               1
-// Total number of exported functions:   3
+// Endpoints:                           11
+// Async Callback:                       1
+// Total number of exported functions:  14
 
 #![no_std]
 
@@ -20,7 +20,18 @@ multiversx_sc_wasm_adapter::endpoints! {
     (
         init => init
         upgrade => upgrade
+        start_harvest => start_harvest
+        claim_harvest => claim_harvest
+        change_harvest_color => change_harvest_color
+        stop_harvest => stop_harvest
+        open_contract => open_contract
+        close_contract => close_contract
+        change_color_harvest_duration => change_color_harvest_duration
+        issue_semi_fungible => issue_semi_fungible
+        set_special_roles => set_special_roles
+        create_sft => create_sft
+        add_quantity => add_quantity
     )
 }
 
-multiversx_sc_wasm_adapter::async_callback_empty! {}
+multiversx_sc_wasm_adapter::async_callback! { paint_harvest_sc }

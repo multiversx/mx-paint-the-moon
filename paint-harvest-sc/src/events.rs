@@ -1,4 +1,4 @@
-use crate::data::Color;
+use common::Color;
 
 #[multiversx_sc::module]
 pub trait EventsModule {

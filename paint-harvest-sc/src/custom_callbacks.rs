@@ -9,7 +9,7 @@ pub trait CustomCallbacks: crate::storage::StorageModule {
     ) {
         match result {
             ManagedAsyncCallResult::Ok(token_id) => {
-                self.collection_token_id().set(&token_id.unwrap_esdt());
+                self.collection_token_id().set(token_id.unwrap_esdt());
             }
             ManagedAsyncCallResult::Err(_) => {
                 let returned = self.call_value().egld_or_single_esdt();
