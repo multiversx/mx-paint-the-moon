@@ -75,6 +75,17 @@ fn moon_overlay() -> anyhow::Result<DynamicImage> {
         }
     }
 
+    let paint_here = ImageReader::open("paint_here_2.png")?.decode()?;
+    println!("paint here: {} x {}", egld_logo.width(), egld_logo.height());
+
+    let x0 = 499;
+    let y0 = 250;
+    for (x, y, color) in paint_here.pixels() {
+        if color_is_black(color) {
+            overlay.put_pixel(x0 + x, y0 + y, [180, 0, 210, 255u8].into());
+        }
+    }
+
     overlay.save("rendered_flat.png")?;
 
     // source.resize(nwidth, nheight, filter)
