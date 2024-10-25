@@ -30,6 +30,9 @@ pub async fn adder_cli() {
         Some(basic_interact_cli::InteractCliCommand::Deploy) => {
             basic_interact.multi_deploy().await;
         }
+        Some(basic_interact_cli::InteractCliCommand::Upgrade) => {
+            basic_interact.multi_upgrade().await;
+        }
         Some(basic_interact_cli::InteractCliCommand::Sizes) => {
             basic_interact.print_sizes().await;
         }
@@ -113,6 +116,27 @@ impl AdderInteract {
                 address: new_address,
             });
         }
+    }
+
+    pub async fn multi_upgrade(&mut self) {
+        let mut buffer = self.interactor.homogenous_call_buffer();
+        for contract_info in &self.state.contract_info_list {
+            let block_size = contract_info.block_size;
+            println!("block size {block_size:2} upgrading ....");
+            let code_path =
+                format!("../paint-the-moon-sc/output/paint-the-moon-{block_size}.mxsc.json");
+
+            buffer.push_tx(|tx| {
+                tx.from(&self.owner_address)
+                    .to(&contract_info.address)
+                    .typed(paint_proxy::PaintTheMoonScProxy)
+                    .upgrade()
+                    .code(MxscPath::new(&code_path))
+                    .gas(10_000_000)
+            });
+        }
+
+        let _ = buffer.run().await;
     }
 
     pub async fn print_sizes(&mut self) {
@@ -237,11 +261,13 @@ impl AdderInteract {
         let mut rand_report_raw = OpenOptions::new()
             .write(true)
             .append(true)
+            .create(true)
             .open("rand-report-raw.csv")
             .unwrap();
         let mut rand_report_group = OpenOptions::new()
             .write(true)
             .append(true)
+            .create(true)
             .open("rand-report-group.csv")
             .unwrap();
 
@@ -307,7 +333,7 @@ impl AdderInteract {
 
         let mut rect_report_raw = std::fs::File::create("rect-report-raw.csv").unwrap();
 
-        const STEP: usize = 32;
+        const STEP: usize = 16;
         let max_x: usize = 1024;
         let max_y: usize = 512;
 
@@ -333,7 +359,7 @@ impl AdderInteract {
                             .to(&contract_info.address)
                             .typed(paint_proxy::PaintTheMoonScProxy)
                             .paint_rect(current_x, current_y, next_x, next_y, 5)
-                            .gas(20_000_000)
+                            .gas(100_000_000)
                             .returns(PassValue(current_x))
                             .returns(PassValue(next_x))
                             .returns(PassValue(current_y))

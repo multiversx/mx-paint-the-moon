@@ -29,7 +29,7 @@ path = ".."
 
 [dependencies.multiversx-sc-wasm-adapter]
 git = "https://github.com/multiversx/mx-sdk-rs"
-rev = "55f97ecb4d496461bf3517dee7977a8b6659edd0"
+rev = "00e087192087ae126a541ebbc6cba53a823bc94f"
 
 [workspace]
 members = ["."]
