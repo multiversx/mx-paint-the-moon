@@ -1,0 +1,28 @@
+[package]
+name = "basic-interact"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[[bin]]
+name = "basic-interact"
+path = "src/basic_interact_main.rs"
+
+[lib]
+path = "src/basic_interact.rs"
+
+[dependencies]
+clap = { version = "4.4.7", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8.6"
+tokio = { version = "1.24" }
+
+[dependencies.paint-the-moon-sc]
+path = "../paint-the-moon-sc"
+
+[dependencies.multiversx-sc-snippets]
+git = "https://github.com/multiversx/mx-sdk-rs/"
+rev = "34dc67cde4ad7b14e602dec6e963d2e1e788443f"
+
+[features]
+chain-simulator-tests = []

@@ -5,7 +5,7 @@
 # ##########################################
 
 [package]
-name = "paint-the-moon-main-wasm"
+name = "paint-the-moon-64-wasm"
 version = "0.0.0"
 edition = "2021"
 publish = false
@@ -26,6 +26,8 @@ panic = "abort"
 
 [dependencies.paint-the-moon-sc]
 path = ".."
+features = ["block-size-64"]
+default-features = false
 
 [dependencies.multiversx-sc-wasm-adapter]
 git = "https://github.com/multiversx/mx-sdk-rs"

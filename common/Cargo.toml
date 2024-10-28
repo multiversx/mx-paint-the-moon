@@ -7,8 +7,8 @@ edition = "2021"
 path = "src/lib.rs"
 
 [dependencies]
-multiversx-sc = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "3a0c91737ef73c133c9aa95b690eba9909cb6063" }
-multiversx-sc-snippets-dapp = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "3a0c91737ef73c133c9aa95b690eba9909cb6063" }
+multiversx-sc = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "34dc67cde4ad7b14e602dec6e963d2e1e788443f" }
+multiversx-sc-snippets-dapp = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "34dc67cde4ad7b14e602dec6e963d2e1e788443f" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.128"
 toml = { version = "0.8.19" }

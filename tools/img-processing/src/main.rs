@@ -12,7 +12,7 @@ const MOON_SOURCE_EMBEDDED: &[u8] = include_bytes!("../lroc_color_poles_1k.jpg")
 fn main() {
     // render_checker().unwrap();
     // process_moon().unwrap();
-    render_moon(800, 1.5).unwrap();
+    render_moon(800, 0.0).unwrap();
 }
 
 fn process_moon() -> anyhow::Result<()> {
@@ -33,19 +33,58 @@ fn render_checker() -> anyhow::Result<()> {
     Ok(())
 }
 
+fn color_is_solid(color: Rgba<u8>) -> bool {
+    color.0[3] == 255
+}
+
+fn color_is_black(color: Rgba<u8>) -> bool {
+    const THRESHOLD: u8 = 5;
+    color.0[0] < THRESHOLD && color.0[1] < THRESHOLD && color.0[2] < THRESHOLD
+}
+
 fn moon_source() -> anyhow::Result<DynamicImage> {
-    let source =
-        ImageReader::with_format(Cursor::new(MOON_SOURCE_EMBEDDED), image::ImageFormat::Jpeg)
-            .decode()?;
+    // let mut source =
+    //     ImageReader::with_format(Cursor::new(MOON_SOURCE_EMBEDDED), image::ImageFormat::Jpeg)
+    //         .decode()?;
+
     // let source = ImageReader::open("lroc_color_poles_1k.jpg")?.decode()?;
-    // let source = ImageReader::open("lroc_color_poles_2k.tif")?.decode()?;
+
+    let source = ImageReader::open("lroc_color_poles_2k.tif")?.decode()?;
+    let source = source.resize(1024, 512, image::imageops::FilterType::Nearest);
 
     Ok(source)
 }
 
+fn moon_overlay() -> anyhow::Result<DynamicImage> {
+    let mut overlay = moon_source()?;
+
+    println!("source:    {} x {}", overlay.width(), overlay.height());
+
+    let egld_logo = ImageReader::open("egld-logo.png")?.decode()?;
+    println!("egld logo: {} x {}", egld_logo.width(), egld_logo.height());
+    let egld_logo = egld_logo.resize(100, 100, image::imageops::FilterType::Nearest);
+    println!("egld logo: {} x {}", egld_logo.width(), egld_logo.height());
+
+    let x0 = overlay.width() * 2 / 4;
+    let y0 = overlay.height() / 4;
+    for (x, y, color) in egld_logo.pixels() {
+        if color_is_solid(color)
+        /*&& !color_is_black(color)*/
+        {
+            overlay.put_pixel(x0 + x, y0 + y, color);
+        }
+    }
+
+    overlay.save("rendered_flat.png")?;
+
+    // source.resize(nwidth, nheight, filter)
+
+    Ok(overlay)
+}
+
 fn render_moon(size: u32, long0: f32) -> anyhow::Result<()> {
-    // let source = moon_source()?;
-    let source = sphere::generate_checker(1000, 500);
+    let source = moon_overlay()?;
+    // let source = sphere::generate_checker(1000, 500);
     sphere(size, long0, &source)?;
 
     Ok(())
@@ -59,7 +98,7 @@ fn sphere(size: u32, long0: f32, source: &DynamicImage) -> anyhow::Result<()> {
         Result::<(), Infallible>::Ok(())
     });
 
-    rendered.save("rendered.bmp")?;
+    rendered.save("rendered_sphere.png")?;
 
     Ok(())
 }

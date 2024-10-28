@@ -1,4 +1,5 @@
-use common::{Color, UserInfo};
+// use common::{Color, UserInfo};
+use super::{Color, UserInfo};
 use multiversx_sc::imports::*;
 
 #[multiversx_sc::module]

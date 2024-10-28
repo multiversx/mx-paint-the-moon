@@ -24,6 +24,12 @@ overflow-checks = false
 [profile.dev]
 panic = "abort"
 
-[dependencies]
-paint-harvest-sc = { path = ".." }
-multiversx-sc-wasm-adapter = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "3a0c91737ef73c133c9aa95b690eba9909cb6063" }
+[dependencies.paint-harvest-sc]
+path = ".."
+
+[dependencies.multiversx-sc-wasm-adapter]
+git = "https://github.com/multiversx/mx-sdk-rs"
+rev = "34dc67cde4ad7b14e602dec6e963d2e1e788443f"
+
+[workspace]
+members = ["."]
