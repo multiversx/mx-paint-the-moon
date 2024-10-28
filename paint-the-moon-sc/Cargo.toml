@@ -16,9 +16,6 @@ block-size-16 = []
 block-size-32 = []
 block-size-64 = []
 
-[dependencies.common]
-path = "../common"
-
 [dependencies.multiversx-sc]
 git = "https://github.com/multiversx/mx-sdk-rs"
 rev = "34dc67cde4ad7b14e602dec6e963d2e1e788443f"

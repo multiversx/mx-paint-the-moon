@@ -259,36 +259,40 @@
             "type": "enum",
             "variants": [
                 {
-                    "name": "White",
+                    "name": "Transparent",
                     "discriminant": 0
                 },
                 {
-                    "name": "Black",
+                    "name": "White",
                     "discriminant": 1
                 },
                 {
-                    "name": "Blue",
+                    "name": "Black",
                     "discriminant": 2
                 },
                 {
-                    "name": "Red",
+                    "name": "Blue",
                     "discriminant": 3
                 },
                 {
-                    "name": "Yellow",
+                    "name": "Red",
                     "discriminant": 4
                 },
                 {
-                    "name": "Green",
+                    "name": "Yellow",
                     "discriminant": 5
                 },
                 {
-                    "name": "Purple",
+                    "name": "Green",
                     "discriminant": 6
                 },
                 {
-                    "name": "Grey",
+                    "name": "Purple",
                     "discriminant": 7
+                },
+                {
+                    "name": "Grey",
+                    "discriminant": 8
                 }
             ]
         }

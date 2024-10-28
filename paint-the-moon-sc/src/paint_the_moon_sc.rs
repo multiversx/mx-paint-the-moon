@@ -1,11 +1,14 @@
 #![no_std]
-use common::Color;
+#![allow(unused_imports)]
 
-#[allow(unused_imports)]
 use multiversx_sc::imports::*;
 
+pub mod data;
 pub mod paint_proxy;
 pub mod pixel_block;
+
+pub use data::*;
+pub use pixel_block::PixelBlock;
 
 #[cfg(feature = "block-size-4")]
 pub type Block = pixel_block::PixelBlock<pixel_block::PixelBlockData4>;
@@ -47,7 +50,6 @@ pub trait PaintTheMoonSc {
         Block::size()
     }
 
-    // can paint every point white at the beginning
     #[payable("*")]
     #[endpoint]
     fn paint(&self, x: usize, y: usize, new_color: u8) {

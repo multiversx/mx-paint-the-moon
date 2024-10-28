@@ -21,6 +21,7 @@ pub const MAX_WIDTH: u32 = 500;
     Debug,
 )]
 pub enum Color {
+    Transparent,
     White,
     Black,
     Blue,
@@ -35,6 +36,7 @@ pub enum Color {
 impl Color {
     pub fn to_token_id(&self) -> &str {
         match self {
+            Color::Transparent => "",
             Color::White => "WHITE-0123",
             Color::Black => "BLACK-0123",
             Color::Blue => "BLUE-0123",

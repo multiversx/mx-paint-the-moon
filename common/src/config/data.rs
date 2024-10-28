@@ -1,4 +1,3 @@
-use multiversx_sc_snippets_dapp::imports::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq, Clone)]

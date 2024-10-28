@@ -1,3 +1,4 @@
+use crate::{rabbit_mq::MessageEvent, redis_local::Redis};
 use common::{Color, Coordinates, Point, MAX_HEIGHT, MAX_WIDTH};
 use common_non_wasm::{ConfigNonWasm, PointsNonWasm};
 use multiversx_sc_snippets::imports::NestedDecode;
@@ -5,21 +6,12 @@ use multiversx_sdk::utils::base64_decode;
 use redis::{AsyncCommands, RedisError};
 use serde::{Deserialize, Serialize};
 
-use crate::redis_local::Redis;
-
-use super::MessageEvent;
+use super::events::Event;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Splash {
     coordinates: Coordinates,
     new_color: Color,
-}
-
-pub trait Event {
-    fn from_message_event(event: &MessageEvent) -> Option<Self>
-    where
-        Self: Sized;
-    async fn handle_event(&self, redis_client: &Redis);
 }
 
 impl Event for Splash {

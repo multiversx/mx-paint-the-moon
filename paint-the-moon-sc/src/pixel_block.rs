@@ -11,7 +11,7 @@ pub trait PixelBlockData: Default {
 
 macro_rules! pixel_block_data {
     ($struct_name:ident, $size_in_bits:expr, $raw_data_size:expr) => {
-        #[derive(Clone)]
+        #[derive(Clone, PartialEq, Debug)]
         pub struct $struct_name {
             data: [u8; $raw_data_size],
         }
@@ -47,7 +47,7 @@ pixel_block_data!(PixelBlockData16, 4, 128);
 pixel_block_data!(PixelBlockData32, 5, 512);
 pixel_block_data!(PixelBlockData64, 6, 2048);
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug, PartialEq)]
 pub struct PixelBlock<Data: PixelBlockData> {
     data: Data,
 }

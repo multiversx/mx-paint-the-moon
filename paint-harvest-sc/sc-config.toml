@@ -1,2 +1,2 @@
 [[proxy]]
-path = "../comon/src/proxies/paint_harvest_proxy.rs"
+path = "../common/src/proxies/paint_harvest_proxy.rs"

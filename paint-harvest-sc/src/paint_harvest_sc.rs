@@ -1,12 +1,15 @@
 #![no_std]
-use common::{Color, UserInfo};
 use multiversx_sc::imports::*;
+use paint_the_moon_sc::Color;
 
 mod custom_callbacks;
+mod data;
 mod events;
 mod owner;
 mod private;
 mod storage;
+
+pub use data::*;
 
 /// Paint harvesting contract used for receiving paint once in a while.
 #[multiversx_sc::contract]
