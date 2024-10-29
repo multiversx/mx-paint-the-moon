@@ -90,7 +90,7 @@ impl AdderInteract {
         for block_size in BLOCK_SIZES {
             println!("block size {block_size:2} deploying ....");
             let code_path =
-                format!("../paint-the-moon-sc/output/paint-the-moon-{block_size}.mxsc.json");
+                format!("../paint-the-moon-sc/output/block-{block_size}.mxsc.json");
 
             buffer.push_tx(|tx| {
                 tx.from(&self.owner_address)

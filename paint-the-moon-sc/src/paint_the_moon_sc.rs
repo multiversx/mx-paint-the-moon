@@ -27,22 +27,17 @@ pub type Block = pixel_block::PixelBlock<pixel_block::PixelBlockData32>;
 #[cfg(feature = "block-size-64")]
 pub type Block = pixel_block::PixelBlock<pixel_block::PixelBlockData64>;
 
-// const MAP_SIZE_BITS_X: u32 = MAP_SIZE_BITS_Y + 1; // ratio is always 2:1
-// const MAP_SIZE_BITS_Y: u32 = 9;
+const MAP_SIZE_BITS_X: usize = MAP_SIZE_BITS_Y + 1; // ratio is always 2:1
+const MAP_SIZE_BITS_Y: usize = 9;
 
-// const MAP_SIZE_PIXELS_X: u32 = 1 << MAP_SIZE_BITS_X; // 1024
-// const MAP_SIZE_PIXELS_Y: u32 = 1 << MAP_SIZE_BITS_Y; // 512
+const MAP_SIZE_PIXELS_X: usize = 1 << MAP_SIZE_BITS_X; // 1024
+const MAP_SIZE_PIXELS_Y: usize = 1 << MAP_SIZE_BITS_Y; // 512
 
 /// A very light contract containing the map points and their state.
 #[multiversx_sc::contract]
 pub trait PaintTheMoonSc {
-    // endpoints
     #[init]
-    fn init(&self, setup: MultiValueEncoded<(TokenIdentifier, Color)>) {
-        for (token_id, color) in setup.into_iter() {
-            self.paint_id(&(color as u8)).set(token_id)
-        }
-    }
+    fn init(&self) {}
 
     #[upgrade]
     fn upgrade(&self) {}
@@ -52,18 +47,11 @@ pub trait PaintTheMoonSc {
         Block::size()
     }
 
-    #[payable("*")]
     #[endpoint]
     fn paint(&self, x: usize, y: usize, new_color: u8) {
-        let payment = self.call_value().single_esdt();
-        let paint_id = self.paint_id(&new_color).get();
-
-        require!(
-            &payment.token_identifier == &paint_id
-                && payment.token_nonce == 0u64
-                && &payment.amount == &BigUint::from(1u64),
-            "only one unit of paint can be sent at once"
-        );
+        require!(x < MAP_SIZE_PIXELS_X, "invalid x");
+        require!(y < MAP_SIZE_PIXELS_Y, "invalid y");
+        require!(new_color < 16, "invalid color");
 
         let (block_x, sub_x) = Block::split_coord(x);
         let (block_y, sub_y) = Block::split_coord(y);
@@ -77,50 +65,16 @@ pub trait PaintTheMoonSc {
         raw_block_mapper.set(raw_block);
     }
 
+    /// Endpoint used for benchmarking gas. Not available in production.
     #[payable("*")]
     #[endpoint]
+    #[label("block-benchmark")]
     fn paint_rect(&self, x0: usize, y0: usize, xr: usize, yr: usize, new_color: u8) {
         for x in x0..xr {
             for y in y0..yr {
                 self.paint(x, y, new_color);
             }
         }
-        // let mut block_x = x0 / Block::size();
-        // let mut block_y = y0 / Block::size();
-
-        // // load initial
-        // let mut raw_block_mapper = self.raw_blocks(block_x, block_y);
-        // let raw_block = raw_block_mapper.get();
-        // let mut block = Block::from_managed_buffer(&raw_block);
-
-        // for x in x0..xr {
-        //     for y in y0..yr {
-        //         let (new_block_x, sub_x) = Block::split_coord(x);
-        //         let (new_block_y, sub_y) = Block::split_coord(y);
-
-        //         if block_x != new_block_x && block_y != new_block_y {
-        //             // save
-        //             let raw_block = block.to_managed_buffer();
-        //             self.block_changed(block_x, block_y, &raw_block);
-        //             raw_block_mapper.set(raw_block);
-
-        //             block_x = new_block_x;
-        //             block_y = new_block_y;
-
-        //             // load new
-        //             raw_block_mapper = self.raw_blocks(block_x, block_y);
-        //             let raw_block = raw_block_mapper.get();
-        //             block = Block::from_managed_buffer(&raw_block);
-        //         }
-
-        //         block.set_raw_pixel(sub_x, sub_y, new_color);
-        //     }
-        // }
-
-        // // save final
-        // let raw_block = block.to_managed_buffer();
-        // self.block_changed(block_x, block_y, &raw_block);
-        // raw_block_mapper.set(raw_block);
     }
 
     #[event("blockChanged")]
