@@ -6,23 +6,24 @@ publish = false
 
 [[bin]]
 name = "basic-interact"
-path = "src/basic_interact_main.rs"
+path = "src/gas_interact_main.rs"
 
 [lib]
-path = "src/basic_interact.rs"
+path = "src/gas_interact.rs"
 
 [dependencies]
 clap = { version = "4.4.7", features = ["derive"] }
 serde = { version = "1.0", features = ["derive"] }
 toml = "0.8.6"
 tokio = { version = "1.24" }
+rand = "0.8.5"
 
 [dependencies.paint-the-moon-sc]
 path = "../paint-the-moon-sc"
 
 [dependencies.multiversx-sc-snippets]
 git = "https://github.com/multiversx/mx-sdk-rs/"
-rev = "34dc67cde4ad7b14e602dec6e963d2e1e788443f"
+rev = "d37a5bf2ff061da8cd087ede1bad3f5cf75800a9"
 
 [features]
 chain-simulator-tests = []

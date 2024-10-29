@@ -12,14 +12,20 @@ pub struct InteractCli {
 /// Adder Interact CLI Commands
 #[derive(Clone, PartialEq, Eq, Debug, Subcommand)]
 pub enum InteractCliCommand {
-    #[command(name = "deploy", about = "Deploy contract")]
+    #[command(name = "deploy", about = "Deploy contracts")]
     Deploy,
+    #[command(name = "upgrade", about = "Upgrade contracts")]
+    Upgrade,
     #[command(name = "sizes", about = "Print pixel block sizes")]
     Sizes,
     #[command(name = "paint", about = "Paint!")]
     Paint(PaintArgs),
     #[command(name = "paint-all", about = "Paint every pixel")]
     PaintAll,
+    #[command(name = "paint-rect", about = "Paint rectangle by rectangle")]
+    PaintRectangles,
+    #[command(name = "paint-rand", about = "Paint random points")]
+    PaintRand,
 }
 
 #[derive(Default, Clone, PartialEq, Eq, Debug, Args)]

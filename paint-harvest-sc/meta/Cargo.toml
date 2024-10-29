@@ -9,4 +9,4 @@ path = ".."
 
 [dependencies.multiversx-sc-meta-lib]
 git = "https://github.com/multiversx/mx-sdk-rs"
-rev = "34dc67cde4ad7b14e602dec6e963d2e1e788443f"
+rev = "d37a5bf2ff061da8cd087ede1bad3f5cf75800a9"

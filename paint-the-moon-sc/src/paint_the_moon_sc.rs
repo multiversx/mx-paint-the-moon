@@ -1,6 +1,8 @@
 #![no_std]
-#![allow(unused_imports)]
 
+use core::usize;
+
+#[allow(unused_imports)]
 use multiversx_sc::imports::*;
 
 pub mod data;
@@ -73,6 +75,52 @@ pub trait PaintTheMoonSc {
         let raw_block = block.to_managed_buffer();
         self.block_changed(block_x, block_y, &raw_block);
         raw_block_mapper.set(raw_block);
+    }
+
+    #[payable("*")]
+    #[endpoint]
+    fn paint_rect(&self, x0: usize, y0: usize, xr: usize, yr: usize, new_color: u8) {
+        for x in x0..xr {
+            for y in y0..yr {
+                self.paint(x, y, new_color);
+            }
+        }
+        // let mut block_x = x0 / Block::size();
+        // let mut block_y = y0 / Block::size();
+
+        // // load initial
+        // let mut raw_block_mapper = self.raw_blocks(block_x, block_y);
+        // let raw_block = raw_block_mapper.get();
+        // let mut block = Block::from_managed_buffer(&raw_block);
+
+        // for x in x0..xr {
+        //     for y in y0..yr {
+        //         let (new_block_x, sub_x) = Block::split_coord(x);
+        //         let (new_block_y, sub_y) = Block::split_coord(y);
+
+        //         if block_x != new_block_x && block_y != new_block_y {
+        //             // save
+        //             let raw_block = block.to_managed_buffer();
+        //             self.block_changed(block_x, block_y, &raw_block);
+        //             raw_block_mapper.set(raw_block);
+
+        //             block_x = new_block_x;
+        //             block_y = new_block_y;
+
+        //             // load new
+        //             raw_block_mapper = self.raw_blocks(block_x, block_y);
+        //             let raw_block = raw_block_mapper.get();
+        //             block = Block::from_managed_buffer(&raw_block);
+        //         }
+
+        //         block.set_raw_pixel(sub_x, sub_y, new_color);
+        //     }
+        // }
+
+        // // save final
+        // let raw_block = block.to_managed_buffer();
+        // self.block_changed(block_x, block_y, &raw_block);
+        // raw_block_mapper.set(raw_block);
     }
 
     #[event("blockChanged")]

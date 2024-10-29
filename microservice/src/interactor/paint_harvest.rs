@@ -1,11 +1,7 @@
 use crate::ContractInteract;
 use common::PaintHarvestScProxy;
 use multiversx_sc_snippets::{
-    base::InteractorPrepareAsync,
-    imports::{
-        Bech32Address, BytesValue, CodeMetadata, ReturnsHandledOrError, ReturnsNewBech32Address,
-        TokenIdentifier,
-    },
+    base::InteractorPrepareAsync, imports::*,
     multiversx_sc_scenario::scenario_model::TxResponseStatus,
 };
 
@@ -26,7 +22,6 @@ impl ContractInteract {
             .code(paint_harvest_code)
             .code_metadata(CodeMetadata::UPGRADEABLE)
             .returns(ReturnsHandledOrError::new().returns(ReturnsNewBech32Address))
-            .prepare_async()
             .run()
             .await
     }

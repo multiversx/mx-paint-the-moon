@@ -38,7 +38,6 @@ impl ContractInteract {
                 0u64,
                 &BigUint::from(1u64),
             )
-            .prepare_async()
             .run()
             .await;
 

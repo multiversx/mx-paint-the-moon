@@ -1,12 +1,7 @@
 use crate::ContractInteract;
 use common::{Color, PaintTheMoonScProxy, Point};
 use multiversx_sc_snippets::{
-    base::InteractorPrepareAsync,
-    imports::{
-        Bech32Address, BytesValue, CodeMetadata, EsdtTokenPayment, MultiValueEncoded,
-        ReturnsHandledOrError, ReturnsNewBech32Address, ReturnsResultUnmanaged, StaticApi,
-        TokenIdentifier,
-    },
+    base::InteractorPrepareAsync, imports::*,
     multiversx_sc_scenario::scenario_model::TxResponseStatus,
 };
 
@@ -22,7 +17,6 @@ impl ContractInteract {
             .typed(PaintTheMoonScProxy)
             .get_all_points()
             .returns(ReturnsHandledOrError::new().returns(ReturnsResultUnmanaged))
-            .prepare_async()
             .run()
             .await
     }
@@ -44,7 +38,6 @@ impl ContractInteract {
             .paint(point)
             .payment(payment)
             .returns(ReturnsHandledOrError::new())
-            .prepare_async()
             .run()
             .await;
 
@@ -69,7 +62,6 @@ impl ContractInteract {
             .code(paint_the_moon_code)
             .code_metadata(CodeMetadata::UPGRADEABLE)
             .returns(ReturnsHandledOrError::new().returns(ReturnsNewBech32Address))
-            .prepare_async()
             .run()
             .await
     }
@@ -89,7 +81,6 @@ impl ContractInteract {
             .typed(PaintTheMoonScProxy)
             .initial_map_setup(points)
             .returns(ReturnsHandledOrError::new())
-            .prepare_async()
             .run()
             .await;
 
@@ -114,7 +105,6 @@ impl ContractInteract {
             .code(paint_the_moon_code)
             .code_metadata(CodeMetadata::UPGRADEABLE)
             .returns(ReturnsHandledOrError::new().returns(ReturnsNewBech32Address))
-            .prepare_async()
             .run()
             .await
     }
