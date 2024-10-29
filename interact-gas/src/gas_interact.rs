@@ -1,16 +1,16 @@
-mod basic_interact_cli;
-mod basic_interact_config;
-mod basic_interact_state;
+mod gas_interact_cli;
+mod gas_interact_config;
+mod gas_interact_state;
 
 use std::{
     collections::{BTreeMap, HashMap},
     fs::OpenOptions,
 };
 
-use crate::basic_interact_state::State;
-pub use basic_interact_config::Config;
-use basic_interact_state::ContractInfo;
 use clap::Parser;
+pub use gas_interact_config::Config;
+use gas_interact_state::ContractInfo;
+use gas_interact_state::State;
 use multiversx_sc_snippets::imports::*;
 use paint_the_moon_sc::paint_proxy;
 use rand::Rng;
@@ -25,27 +25,27 @@ pub async fn adder_cli() {
 
     let mut basic_interact = AdderInteract::init(config).await;
 
-    let cli = basic_interact_cli::InteractCli::parse();
+    let cli = gas_interact_cli::InteractCli::parse();
     match &cli.command {
-        Some(basic_interact_cli::InteractCliCommand::Deploy) => {
+        Some(gas_interact_cli::InteractCliCommand::Deploy) => {
             basic_interact.multi_deploy().await;
         }
-        Some(basic_interact_cli::InteractCliCommand::Upgrade) => {
+        Some(gas_interact_cli::InteractCliCommand::Upgrade) => {
             basic_interact.multi_upgrade().await;
         }
-        Some(basic_interact_cli::InteractCliCommand::Sizes) => {
+        Some(gas_interact_cli::InteractCliCommand::Sizes) => {
             basic_interact.print_sizes().await;
         }
-        Some(basic_interact_cli::InteractCliCommand::Paint(_args)) => {
+        Some(gas_interact_cli::InteractCliCommand::Paint(_args)) => {
             basic_interact.paint_one().await;
         }
-        Some(basic_interact_cli::InteractCliCommand::PaintAll) => {
+        Some(gas_interact_cli::InteractCliCommand::PaintAll) => {
             basic_interact.paint_all().await;
         }
-        Some(basic_interact_cli::InteractCliCommand::PaintRectangles) => {
+        Some(gas_interact_cli::InteractCliCommand::PaintRectangles) => {
             basic_interact.paint_rectangles().await;
         }
-        Some(basic_interact_cli::InteractCliCommand::PaintRand) => {
+        Some(gas_interact_cli::InteractCliCommand::PaintRand) => {
             basic_interact.paint_rand().await;
         }
         _ => {}
