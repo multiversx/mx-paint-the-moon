@@ -26,7 +26,6 @@ pub enum InteractCliCommand {
     PaintRectangles,
     #[command(name = "paint-rand", about = "Paint random points")]
     PaintRand,
-    
 }
 
 #[derive(Default, Clone, PartialEq, Eq, Debug, Args)]
