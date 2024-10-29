@@ -1,36 +1,12 @@
 use multiversx_sc::derive_imports::*;
 use serde::{Deserialize, Serialize};
 
+use crate::proxies::Color;
+
 pub const ISSUE_COST: u64 = 50000000000000000;
 
 pub const MAX_HEIGHT: u32 = 500;
 pub const MAX_WIDTH: u32 = 500;
-
-#[type_abi]
-#[derive(
-    Serialize,
-    Deserialize,
-    TopEncode,
-    TopDecode,
-    NestedEncode,
-    NestedDecode,
-    Copy,
-    Clone,
-    PartialEq,
-    ManagedVecItem,
-    Debug,
-)]
-pub enum Color {
-    Transparent,
-    White,
-    Black,
-    Blue,
-    Red,
-    Yellow,
-    Green,
-    Purple,
-    Grey,
-}
 
 // TODO: replace these with actual token identifiers
 impl Color {

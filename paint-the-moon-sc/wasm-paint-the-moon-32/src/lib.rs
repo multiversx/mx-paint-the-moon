@@ -23,6 +23,7 @@ multiversx_sc_wasm_adapter::endpoints! {
         block_size => block_size
         paint => paint
         paint_rect => paint_rect
+        getRawBlock => raw_blocks
     )
 }
 

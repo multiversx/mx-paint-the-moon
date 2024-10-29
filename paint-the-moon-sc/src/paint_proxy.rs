@@ -135,6 +135,22 @@ where
             .argument(&new_color)
             .original_result()
     }
+
+    pub fn raw_blocks<
+        Arg0: ProxyArg<usize>,
+        Arg1: ProxyArg<usize>,
+    >(
+        self,
+        block_x: Arg0,
+        block_y: Arg1,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ManagedBuffer<Env::Api>> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("getRawBlock")
+            .argument(&block_x)
+            .argument(&block_y)
+            .original_result()
+    }
 }
 
 #[type_abi]

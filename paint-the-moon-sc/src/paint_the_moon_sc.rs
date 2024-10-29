@@ -131,6 +131,7 @@ pub trait PaintTheMoonSc {
         raw_block: &ManagedBuffer,
     );
 
+    #[view(getRawBlock)]
     #[storage_mapper("blocks")]
     fn raw_blocks(&self, block_x: usize, block_y: usize) -> SingleValueMapper<ManagedBuffer>;
 

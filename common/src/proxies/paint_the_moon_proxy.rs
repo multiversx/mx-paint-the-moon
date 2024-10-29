@@ -8,8 +8,7 @@
 #![allow(clippy::all)]
 
 use multiversx_sc::proxy_imports::*;
-
-use crate::{Color, Point};
+use serde::{Deserialize, Serialize};
 
 pub struct PaintTheMoonScProxy;
 
@@ -87,37 +86,72 @@ where
     To: TxTo<Env>,
     Gas: TxGas<Env>,
 {
+    pub fn block_size(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, usize> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("block_size")
+            .original_result()
+    }
+
     pub fn paint<
-        Arg0: ProxyArg<Point>,
+        Arg0: ProxyArg<usize>,
+        Arg1: ProxyArg<usize>,
+        Arg2: ProxyArg<u8>,
     >(
         self,
-        point: Arg0,
+        x: Arg0,
+        y: Arg1,
+        new_color: Arg2,
     ) -> TxTypedCall<Env, From, To, (), Gas, ()> {
         self.wrapped_tx
             .raw_call("paint")
-            .argument(&point)
+            .argument(&x)
+            .argument(&y)
+            .argument(&new_color)
             .original_result()
     }
 
-    pub fn get_all_points(
-        self,
-    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ManagedVec<Env::Api, Point>> {
-        self.wrapped_tx
-            .payment(NotPayable)
-            .raw_call("getAllPoints")
-            .original_result()
-    }
-
-    pub fn initial_map_setup<
-        Arg0: ProxyArg<ManagedVec<Env::Api, Point>>,
+    pub fn raw_blocks<
+        Arg0: ProxyArg<usize>,
+        Arg1: ProxyArg<usize>,
     >(
         self,
-        points: Arg0,
-    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        block_x: Arg0,
+        block_y: Arg1,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ManagedBuffer<Env::Api>> {
         self.wrapped_tx
             .payment(NotPayable)
-            .raw_call("initial_map_setup")
-            .argument(&points)
+            .raw_call("getRawBlock")
+            .argument(&block_x)
+            .argument(&block_y)
             .original_result()
     }
+}
+
+#[type_abi]
+#[derive(
+    Serialize,
+    Deserialize,
+    TopEncode,
+    TopDecode,
+    NestedEncode,
+    NestedDecode,
+    Copy,
+    Clone,
+    PartialEq,
+    ManagedVecItem,
+    Debug,
+)]
+pub enum Color {
+    Transparent,
+    White,
+    Black,
+    Blue,
+    Red,
+    Yellow,
+    Green,
+    Purple,
+    Grey,
 }

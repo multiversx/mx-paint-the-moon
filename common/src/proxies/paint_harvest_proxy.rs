@@ -7,8 +7,9 @@
 #![allow(dead_code)]
 #![allow(clippy::all)]
 
-use crate::Color;
 use multiversx_sc::proxy_imports::*;
+
+use super::paint_the_moon_proxy;
 
 pub struct PaintHarvestScProxy;
 
@@ -90,7 +91,7 @@ where
     Gas: TxGas<Env>,
 {
     pub fn start_harvest<
-        Arg0: ProxyArg<Color>,
+        Arg0: ProxyArg<paint_the_moon_proxy::Color>,
     >(
         self,
         color: Arg0,
@@ -111,7 +112,7 @@ where
     }
 
     pub fn change_harvest_color<
-        Arg0: ProxyArg<Color>,
+        Arg0: ProxyArg<paint_the_moon_proxy::Color>,
     >(
         self,
         new_color: Arg0,
@@ -151,7 +152,7 @@ where
     }
 
     pub fn change_color_harvest_duration<
-        Arg0: ProxyArg<Color>,
+        Arg0: ProxyArg<paint_the_moon_proxy::Color>,
         Arg1: ProxyArg<u64>,
     >(
         self,

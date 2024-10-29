@@ -20,7 +20,8 @@ pub async fn get_points(redis_client: web::Data<Redis>) -> impl Responder {
     match points_cached_value {
         Ok(points) => QueryResponseNonWasm::new(points).response(),
         Err(_) => {
-            let result = contract_interact.get_points().await;
+            // TODO: make a request that gets all state from the sc
+            let result = Err("not yet");
 
             match result {
                 Ok(points_vec) => {
@@ -31,7 +32,7 @@ pub async fn get_points(redis_client: web::Data<Redis>) -> impl Responder {
                 }
                 Err(err) => HttpResponse::InternalServerError().body(format!(
                     "Get points SC query failed with error message: {:#?}",
-                    err.message
+                    err
                 )),
             }
         }

@@ -32,7 +32,7 @@ impl ContractInteract {
             ))
             .gas(5_000_000u64)
             .typed(PaintTheMoonScProxy)
-            .paint(point)
+            .paint(point.x, point.y, point.color as u8)
             .single_esdt(
                 &point.color.to_token_id().into(),
                 0u64,
