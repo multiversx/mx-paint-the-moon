@@ -1,11 +1,11 @@
 [package]
-name = "basic-interact"
+name = "ptm-benchmark-gas"
 version = "0.0.0"
 edition = "2021"
 publish = false
 
 [[bin]]
-name = "basic-interact"
+name = "ptm-benchmark-gas"
 path = "src/gas_interact_main.rs"
 
 [lib]

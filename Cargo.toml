@@ -5,7 +5,9 @@ members = [
     "common",
     "common-wasm",
     "common-non-wasm",
-    "interact-gas",
+
+    "benchmark-gas",
+    "interact",
 
     "paint-harvest-sc",
     "paint-harvest-sc/meta",
