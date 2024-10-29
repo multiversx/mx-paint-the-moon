@@ -2,6 +2,9 @@
 resolver = "2"
 
 members = [
+    "common",
+    "common-wasm",
+    "common-non-wasm",
     "interact-gas",
 
     "paint-harvest-sc",
@@ -9,6 +12,10 @@ members = [
 
     "paint-the-moon-sc",
     "paint-the-moon-sc/meta",
+
+    "moon-render-yew",
+
+    "microservice",
 
     "tools/img-processing",
     # "tools/moon-plotter",

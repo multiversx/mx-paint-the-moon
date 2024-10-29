@@ -43,12 +43,16 @@ where
     From: TxFrom<Env>,
     Gas: TxGas<Env>,
 {
-    pub fn init(
+    pub fn init<
+        Arg0: ProxyArg<MultiValueEncoded<Env::Api, (TokenIdentifier<Env::Api>, Color)>>,
+    >(
         self,
+        setup: Arg0,
     ) -> TxTypedDeploy<Env, From, NotPayable, Gas, ()> {
         self.wrapped_tx
             .payment(NotPayable)
             .raw_deploy()
+            .argument(&setup)
             .original_result()
     }
 }
@@ -131,4 +135,18 @@ where
             .argument(&new_color)
             .original_result()
     }
+}
+
+#[type_abi]
+#[derive(TopEncode, TopDecode, NestedEncode, NestedDecode, Copy, Clone, PartialEq, ManagedVecItem, Debug)]
+pub enum Color {
+    Transparent,
+    White,
+    Black,
+    Blue,
+    Red,
+    Yellow,
+    Green,
+    Purple,
+    Grey,
 }

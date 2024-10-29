@@ -1,6 +1,6 @@
+// use common::Color;
+use super::Color;
 use multiversx_sc::imports::*;
-
-use crate::data::Color;
 
 #[multiversx_sc::module]
 pub trait PrivateModule:

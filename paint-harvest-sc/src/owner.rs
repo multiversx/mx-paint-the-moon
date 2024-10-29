@@ -1,9 +1,8 @@
-use multiversx_sc::imports::*;
+use crate::custom_callbacks::{CallbackProxy, CustomCallbacks};
+use crate::ISSUE_COST;
+use paint_the_moon_sc::Color;
 
-use crate::{
-    custom_callbacks::{CallbackProxy, CustomCallbacks},
-    data::{Color, ISSUE_COST},
-};
+use multiversx_sc::imports::*;
 
 #[multiversx_sc::module]
 pub trait OwnerModule:
@@ -36,7 +35,7 @@ pub trait OwnerModule:
 
         let payment_amount = self.call_value().egld_value().clone_value();
         require!(
-            &payment_amount == &BigUint::from(ISSUE_COST),
+            payment_amount == ISSUE_COST,
             "Issue cost (0,05 egld) should be sent to this endpoint"
         );
 
@@ -69,8 +68,8 @@ pub trait OwnerModule:
             .to(ESDTSystemSCAddress)
             .typed(ESDTSystemSCProxy)
             .set_special_roles(
-                &self.blockchain().get_sc_address(),
-                &self.paint_token_id().get(),
+                self.blockchain().get_sc_address(),
+                self.paint_token_id().get(),
                 [
                     EsdtLocalRole::Mint,
                     EsdtLocalRole::NftCreate,
@@ -97,11 +96,11 @@ pub trait OwnerModule:
             .to(ToSelf)
             .typed(UserBuiltinProxy)
             .esdt_nft_create(
-                &self.paint_token_id().get(),
-                &BigUint::from(1u64),
+                self.paint_token_id().get(),
+                BigUint::from(1u64),
                 &color,
-                &BigUint::zero(),
-                &ManagedBuffer::new(),
+                BigUint::zero(),
+                ManagedBuffer::new(),
                 &attributes,
                 &uris,
             )
@@ -114,7 +113,7 @@ pub trait OwnerModule:
         self.tx()
             .to(ToSelf)
             .typed(UserBuiltinProxy)
-            .esdt_local_mint(&self.paint_token_id().get(), color_nonce, amount)
+            .esdt_local_mint(self.paint_token_id().get(), color_nonce, amount)
             .async_call_and_exit()
     }
 }

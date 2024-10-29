@@ -1,0 +1,11 @@
+[package]
+name = "common"
+version = "0.0.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+multiversx-sc = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "d37a5bf2ff061da8cd087ede1bad3f5cf75800a9" }
+serde = { version = "1.0", features = ["derive"] }

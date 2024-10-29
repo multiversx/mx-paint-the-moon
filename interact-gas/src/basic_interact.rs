@@ -95,7 +95,7 @@ impl AdderInteract {
             buffer.push_tx(|tx| {
                 tx.from(&self.owner_address)
                     .typed(paint_proxy::PaintTheMoonScProxy)
-                    .init()
+                    .init(MultiValueEncoded::new())
                     .code(MxscPath::new(&code_path))
                     .gas(10_000_000)
                     .returns(ReturnsNewBech32Address)
