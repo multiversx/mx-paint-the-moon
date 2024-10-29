@@ -48,7 +48,7 @@ impl ContractInteract {
             .code_metadata(CodeMetadata::UPGRADEABLE)
             .returns(ReturnsNewAddress)
             .prepare_async()
-            .run()
+.run()
             .await;
 
         let new_address_bech32 = bech32::encode(&new_address);
@@ -70,7 +70,7 @@ impl ContractInteract {
             .initial_map_setup(points.0)
             .returns(ReturnsResultUnmanaged)
             .prepare_async()
-            .run()
+.run()
             .await;
     }
 
@@ -85,7 +85,7 @@ impl ContractInteract {
             .get_all_points()
             .returns(ReturnsResult)
             .prepare_async()
-            .run()
+.run()
             .await;
         println!("All points: {:?}", result);
     }

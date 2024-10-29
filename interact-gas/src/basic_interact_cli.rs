@@ -20,7 +20,6 @@ pub enum InteractCliCommand {
     Paint(PaintArgs),
     #[command(name = "paint-all", about = "Paint every pixel")]
     PaintAll,
-    
 }
 
 #[derive(Default, Clone, PartialEq, Eq, Debug, Args)]

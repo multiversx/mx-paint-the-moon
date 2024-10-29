@@ -18,9 +18,8 @@ block-size-64 = []
 
 [dependencies.multiversx-sc]
 git = "https://github.com/multiversx/mx-sdk-rs"
-rev = "55f97ecb4d496461bf3517dee7977a8b6659edd0"
+rev = "34dc67cde4ad7b14e602dec6e963d2e1e788443f"
 
 [dev-dependencies.multiversx-sc-scenario]
 git = "https://github.com/multiversx/mx-sdk-rs"
-rev = "55f97ecb4d496461bf3517dee7977a8b6659edd0"
-
+rev = "34dc67cde4ad7b14e602dec6e963d2e1e788443f"

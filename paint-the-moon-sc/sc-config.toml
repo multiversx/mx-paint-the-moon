@@ -1,3 +1,6 @@
+[[proxy]]
+path = "../common/src/proxies/paint_the_moon_proxy.rs"
+
 [settings]
 main = "main"
 

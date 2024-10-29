@@ -1,12 +1,14 @@
 #![no_std]
-// use color::Color;
-#[allow(unused_imports)]
+#![allow(unused_imports)]
+
 use multiversx_sc::imports::*;
 
-mod color;
-pub mod pixel_block;
+pub mod data;
 pub mod paint_proxy;
+pub mod pixel_block;
 
+pub use data::*;
+pub use pixel_block::PixelBlock;
 
 #[cfg(feature = "block-size-4")]
 pub type Block = pixel_block::PixelBlock<pixel_block::PixelBlockData4>;
@@ -32,8 +34,13 @@ pub type Block = pixel_block::PixelBlock<pixel_block::PixelBlockData64>;
 /// A very light contract containing the map points and their state.
 #[multiversx_sc::contract]
 pub trait PaintTheMoonSc {
+    // endpoints
     #[init]
-    fn init(&self) {}
+    fn init(&self, setup: MultiValueEncoded<(TokenIdentifier, Color)>) {
+        for (token_id, color) in setup.into_iter() {
+            self.paint_id(&(color as u8)).set(token_id)
+        }
+    }
 
     #[upgrade]
     fn upgrade(&self) {}
@@ -43,19 +50,18 @@ pub trait PaintTheMoonSc {
         Block::size()
     }
 
-    // can paint every point white at the beginning
     #[payable("*")]
     #[endpoint]
     fn paint(&self, x: usize, y: usize, new_color: u8) {
-        // let payment = self.call_value().single_esdt();
-        // let paint_id = self.paint_id(&new_color).get();
+        let payment = self.call_value().single_esdt();
+        let paint_id = self.paint_id(&new_color).get();
 
-        // require!(
-        //     &payment.token_identifier == &paint_id
-        //         && payment.token_nonce == 0u64
-        //         && &payment.amount == &BigUint::from(1u64),
-        //     "only one unit of paint can be sent at once"
-        // );
+        require!(
+            &payment.token_identifier == &paint_id
+                && payment.token_nonce == 0u64
+                && &payment.amount == &BigUint::from(1u64),
+            "only one unit of paint can be sent at once"
+        );
 
         let (block_x, sub_x) = Block::split_coord(x);
         let (block_y, sub_y) = Block::split_coord(y);
@@ -79,4 +85,7 @@ pub trait PaintTheMoonSc {
 
     #[storage_mapper("blocks")]
     fn raw_blocks(&self, block_x: usize, block_y: usize) -> SingleValueMapper<ManagedBuffer>;
+
+    #[storage_mapper("paintId")]
+    fn paint_id(&self, color: &u8) -> SingleValueMapper<TokenIdentifier>;
 }

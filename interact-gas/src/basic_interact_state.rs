@@ -18,7 +18,7 @@ pub struct ContractInfo {
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct State {
     #[serde(default)]
-    pub contract_info_list: Vec<ContractInfo>
+    pub contract_info_list: Vec<ContractInfo>,
 }
 
 impl State {

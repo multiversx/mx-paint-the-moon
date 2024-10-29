@@ -1,4 +1,4 @@
-use crate::data::Color;
+use paint_the_moon_sc::Color;
 
 #[multiversx_sc::module]
 pub trait EventsModule {

@@ -1,6 +1,6 @@
 #![no_std]
-use data::{Color, UserInfo};
 use multiversx_sc::imports::*;
+use paint_the_moon_sc::Color;
 
 mod custom_callbacks;
 mod data;
@@ -8,6 +8,8 @@ mod events;
 mod owner;
 mod private;
 mod storage;
+
+pub use data::*;
 
 /// Paint harvesting contract used for receiving paint once in a while.
 #[multiversx_sc::contract]
@@ -37,7 +39,7 @@ pub trait PaintHarvestSc:
         // check payment token id
         let payment = self.call_value().single_esdt();
         require!(
-            &payment.token_identifier == &self.collection_token_id().get(),
+            payment.token_identifier == self.collection_token_id().get(),
             "Wrong NFT sent"
         );
 
