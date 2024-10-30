@@ -16,6 +16,7 @@ members = [
 
     "paint-the-moon-sc",
     "paint-the-moon-sc/meta",
+    "interactor",
 
     "static-web-server",
 
