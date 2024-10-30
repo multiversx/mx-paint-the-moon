@@ -17,6 +17,8 @@ members = [
     "paint-the-moon-sc",
     "paint-the-moon-sc/meta",
 
+    "static-web-server",
+
     # "moon-render-yew",
     # "microservice",
 
