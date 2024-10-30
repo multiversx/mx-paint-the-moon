@@ -200,6 +200,7 @@ impl MoonInteract {
         let changed_points = self.compose_image().await.expect("failed to compose image");
 
         let mut total_gas_used = 0;
+        let mut num_processed_tx = 0;
 
         for (batch_index, window) in changed_points.chunks(50).enumerate() {
             println!(
@@ -229,6 +230,12 @@ impl MoonInteract {
             println!("Batch gas:        {batch_gas}");
             println!("Batch avg gas/tx: {batch_avg}");
             println!("Cumulated gas:    {total_gas_used}");
+
+            num_processed_tx += window.len();
+            println!(
+                "Pixels remaining: {}",
+                changed_points.len() - num_processed_tx
+            );
         }
     }
 }
