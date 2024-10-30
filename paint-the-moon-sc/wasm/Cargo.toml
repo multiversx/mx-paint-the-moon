@@ -5,7 +5,7 @@
 # ##########################################
 
 [package]
-name = "paint-the-moon-main-wasm"
+name = "paint-the-moon-wasm"
 version = "0.0.0"
 edition = "2021"
 publish = false
