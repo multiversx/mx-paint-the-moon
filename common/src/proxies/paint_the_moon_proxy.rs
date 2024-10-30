@@ -9,8 +9,6 @@
 
 use multiversx_sc::proxy_imports::*;
 
-use crate::{Color, Point};
-
 pub struct PaintTheMoonScProxy;
 
 impl<Env, From, To, Gas> TxProxyTrait<Env, From, To, Gas> for PaintTheMoonScProxy
@@ -45,16 +43,12 @@ where
     From: TxFrom<Env>,
     Gas: TxGas<Env>,
 {
-    pub fn init<
-        Arg0: ProxyArg<MultiValueEncoded<Env::Api, (TokenIdentifier<Env::Api>, Color)>>,
-    >(
+    pub fn init(
         self,
-        setup: Arg0,
     ) -> TxTypedDeploy<Env, From, NotPayable, Gas, ()> {
         self.wrapped_tx
             .payment(NotPayable)
             .raw_deploy()
-            .argument(&setup)
             .original_result()
     }
 }
@@ -87,37 +81,31 @@ where
     To: TxTo<Env>,
     Gas: TxGas<Env>,
 {
-    pub fn paint<
-        Arg0: ProxyArg<Point>,
-    >(
+    pub fn block_size(
         self,
-        point: Arg0,
-    ) -> TxTypedCall<Env, From, To, (), Gas, ()> {
-        self.wrapped_tx
-            .raw_call("paint")
-            .argument(&point)
-            .original_result()
-    }
-
-    pub fn get_all_points(
-        self,
-    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ManagedVec<Env::Api, Point>> {
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, usize> {
         self.wrapped_tx
             .payment(NotPayable)
-            .raw_call("getAllPoints")
+            .raw_call("block_size")
             .original_result()
     }
 
-    pub fn initial_map_setup<
-        Arg0: ProxyArg<ManagedVec<Env::Api, Point>>,
+    pub fn paint<
+        Arg0: ProxyArg<usize>,
+        Arg1: ProxyArg<usize>,
+        Arg2: ProxyArg<u8>,
     >(
         self,
-        points: Arg0,
+        x: Arg0,
+        y: Arg1,
+        new_color: Arg2,
     ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
         self.wrapped_tx
             .payment(NotPayable)
-            .raw_call("initial_map_setup")
-            .argument(&points)
+            .raw_call("paint")
+            .argument(&x)
+            .argument(&y)
+            .argument(&new_color)
             .original_result()
     }
 }

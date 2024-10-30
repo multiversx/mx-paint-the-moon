@@ -108,4 +108,29 @@ where
             .argument(&new_color)
             .original_result()
     }
+
+    /// Endpoint used for benchmarking gas. Not available in production. 
+    pub fn paint_rect<
+        Arg0: ProxyArg<usize>,
+        Arg1: ProxyArg<usize>,
+        Arg2: ProxyArg<usize>,
+        Arg3: ProxyArg<usize>,
+        Arg4: ProxyArg<u8>,
+    >(
+        self,
+        x0: Arg0,
+        y0: Arg1,
+        xr: Arg2,
+        yr: Arg3,
+        new_color: Arg4,
+    ) -> TxTypedCall<Env, From, To, (), Gas, ()> {
+        self.wrapped_tx
+            .raw_call("paint_rect")
+            .argument(&x0)
+            .argument(&y0)
+            .argument(&xr)
+            .argument(&yr)
+            .argument(&new_color)
+            .original_result()
+    }
 }

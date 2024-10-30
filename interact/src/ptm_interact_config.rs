@@ -1,3 +1,4 @@
+use multiversx_sc_snippets::imports::Bech32Address;
 use serde::Deserialize;
 use std::io::Read;
 
@@ -16,6 +17,7 @@ pub enum ChainType {
 pub struct Config {
     pub gateway_uri: String,
     pub chain_type: ChainType,
+    pub moon_address: Bech32Address,
 }
 
 impl Config {
@@ -25,13 +27,6 @@ impl Config {
         let mut content = String::new();
         file.read_to_string(&mut content).unwrap();
         toml::from_str(&content).unwrap()
-    }
-
-    pub fn chain_simulator_config() -> Self {
-        Config {
-            gateway_uri: "http://localhost:8085".to_owned(),
-            chain_type: ChainType::Simulator,
-        }
     }
 
     // Returns the gateway URI

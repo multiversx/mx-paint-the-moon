@@ -18,8 +18,9 @@ toml = "0.8.6"
 tokio = { version = "1.24" }
 rand = "0.8.5"
 
-[dependencies.paint-the-moon-sc]
-path = "../paint-the-moon-sc"
+[dependencies.multiversx-sc]
+git = "https://github.com/multiversx/mx-sdk-rs/"
+rev = "d37a5bf2ff061da8cd087ede1bad3f5cf75800a9"
 
 [dependencies.multiversx-sc-snippets]
 git = "https://github.com/multiversx/mx-sdk-rs/"

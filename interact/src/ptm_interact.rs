@@ -1,65 +1,61 @@
+// mod moon_color;
 mod ptm_interact_cli;
 mod ptm_interact_config;
+mod ptm_interact_image;
 mod ptm_interact_state;
 
-use std::{
-    collections::{BTreeMap, HashMap},
-    fs::OpenOptions,
-};
-
 use clap::Parser;
-use multiversx_sc_snippets::imports::*;
-use paint_the_moon_sc::paint_proxy;
+use image::{GenericImage, ImageReader};
+use moon_color::MoonColor;
+use multiversx_sc_snippets::sdk::gateway::GatewayAsyncService;
+use multiversx_sc_snippets::{imports::*, sdk::gateway::GetAccountStorageRequest};
+use paint_the_moon_sc::pixel_block::PixelBlockData8;
+use paint_the_moon_sc::{paint_proxy, PixelBlock};
 pub use ptm_interact_config::Config;
-use ptm_interact_state::ContractInfo;
 use ptm_interact_state::State;
-use rand::Rng;
-use std::io::Write;
 
-const BLOCK_SIZES: &[usize] = &[4, 8, 16, 32];
+pub type Map = [[MoonColor; 512]; 1024];
+
+pub struct Point {
+    pub x: usize,
+    pub y: usize,
+    pub color: MoonColor,
+}
+
+const CODE_PATH: MxscPath = MxscPath::new("../paint-the-moon-sc/output/paint-the-moon.mxsc.json");
 
 pub async fn main_cli() {
     env_logger::init();
 
     let config = Config::load_config();
 
-    let mut basic_interact = AdderInteract::init(config).await;
+    let mut basic_interact = MoonInteract::init(config).await;
 
     let cli = ptm_interact_cli::InteractCli::parse();
     match &cli.command {
         Some(ptm_interact_cli::InteractCliCommand::Deploy) => {
-            basic_interact.multi_deploy().await;
+            basic_interact.deploy().await;
         }
-        Some(ptm_interact_cli::InteractCliCommand::Upgrade) => {
-            basic_interact.multi_upgrade().await;
+        Some(ptm_interact_cli::InteractCliCommand::Render) => {
+            basic_interact.render().await;
         }
-        Some(ptm_interact_cli::InteractCliCommand::Sizes) => {
-            basic_interact.print_sizes().await;
-        }
-        Some(ptm_interact_cli::InteractCliCommand::Paint(_args)) => {
-            basic_interact.paint_one().await;
-        }
-        Some(ptm_interact_cli::InteractCliCommand::PaintAll) => {
-            basic_interact.paint_all().await;
-        }
-        Some(ptm_interact_cli::InteractCliCommand::PaintRectangles) => {
-            basic_interact.paint_rectangles().await;
-        }
-        Some(ptm_interact_cli::InteractCliCommand::PaintRand) => {
-            basic_interact.paint_rand().await;
+        Some(ptm_interact_cli::InteractCliCommand::PaintImg) => {
+            basic_interact.paint_image().await;
         }
         _ => {}
     }
 }
 
 #[allow(unused)]
-pub struct AdderInteract {
+pub struct MoonInteract {
     pub interactor: Interactor,
     pub owner_address: Bech32Address,
     pub state: State,
+    pub config: Config,
+    pub current_map: Option<Box<Map>>,
 }
 
-impl AdderInteract {
+impl MoonInteract {
     pub async fn init(config: Config) -> Self {
         let mut interactor =
             Interactor::new(config.gateway_uri(), config.use_chain_simulator()).await;
@@ -75,6 +71,8 @@ impl AdderInteract {
             interactor,
             owner_address: owner_address.into(),
             state: State::load_state(),
+            config,
+            current_map: None,
         }
     }
 
@@ -83,309 +81,151 @@ impl AdderInteract {
         self.interactor.retrieve_account(&self.owner_address).await;
     }
 
-    pub async fn multi_deploy(&mut self) {
+    pub async fn deploy(&mut self) {
+        // warning: multi deploy not yet fully supported
+        // only works with last deployed address
+
         self.set_state().await;
 
-        let mut buffer = self.interactor.homogenous_call_buffer();
-        for block_size in BLOCK_SIZES {
-            println!("block size {block_size:2} deploying ....");
-            let code_path = format!("../paint-the-moon-sc/output/block-{block_size}.mxsc.json");
+        let new_address = self
+            .interactor
+            .tx()
+            .from(&self.owner_address)
+            .gas(6_000_000)
+            .typed(paint_proxy::PaintTheMoonScProxy)
+            .init()
+            .code(CODE_PATH)
+            .code_metadata(CodeMetadata::UPGRADEABLE)
+            .returns(ReturnsNewBech32Address)
+            .run()
+            .await;
 
-            buffer.push_tx(|tx| {
-                tx.from(&self.owner_address)
-                    .typed(paint_proxy::PaintTheMoonScProxy)
-                    .init(MultiValueEncoded::new())
-                    .code(MxscPath::new(&code_path))
-                    .gas(10_000_000)
-                    .returns(ReturnsNewBech32Address)
-            });
-        }
-
-        let results: Vec<Bech32Address> = buffer.run().await;
-
-        self.state.contract_info_list.clear();
-
-        for (i, new_address) in results.into_iter().enumerate() {
-            let block_size = BLOCK_SIZES[i];
-
-            println!("block size {block_size:2} new address: {new_address}");
-
-            self.state.contract_info_list.push(ContractInfo {
-                block_size,
-                address: new_address,
-            });
-        }
+        println!("new address: {new_address}");
     }
 
-    pub async fn multi_upgrade(&mut self) {
-        let mut buffer = self.interactor.homogenous_call_buffer();
-        for contract_info in &self.state.contract_info_list {
-            let block_size = contract_info.block_size;
-            println!("block size {block_size:2} upgrading ....");
-            let code_path =
-                format!("../paint-the-moon-sc/output/paint-the-moon-{block_size}.mxsc.json");
-
-            buffer.push_tx(|tx| {
-                tx.from(&self.owner_address)
-                    .to(&contract_info.address)
-                    .typed(paint_proxy::PaintTheMoonScProxy)
-                    .upgrade()
-                    .code(MxscPath::new(&code_path))
-                    .gas(10_000_000)
+    async fn retrieve_map(&self) -> Box<Map> {
+        let account_storage = self
+            .interactor
+            .proxy
+            .request(GetAccountStorageRequest::new(
+                &self.config.moon_address.clone().into_address(),
+            ))
+            .await
+            .unwrap_or_else(move |err| {
+                panic!(
+                    "failed to retrieve storage for address {}: {err}",
+                    &self.config.moon_address
+                )
             });
-        }
 
-        let _ = buffer.run().await;
-    }
+        let mut map = [[MoonColor::TRANSPARENT; 512]; 1024];
 
-    pub async fn print_sizes(&mut self) {
-        for contract_info in &self.state.contract_info_list {
-            let check_size = self
-                .interactor
-                .query()
-                .to(&contract_info.address)
-                .typed(paint_proxy::PaintTheMoonScProxy)
-                .block_size()
-                .returns(ReturnsResult)
-                .run()
-                .await;
+        let key_prefix = hex::encode("blocks");
 
-            println!(
-                "block size {:2} new address: {} check block size: {check_size}",
-                contract_info.block_size, contract_info.address
-            );
-        }
-    }
+        for (key, value) in account_storage.iter() {
+            if let Some(key_xy) = key.strip_prefix(&key_prefix) {
+                assert_eq!(key_xy.len(), 16, "bad length for blocks storage key");
+                let mut x_bytes = [0u8; 4];
+                hex::decode_to_slice(&key_xy[0..8], &mut x_bytes)
+                    .expect("error decoding x coord from storage key");
+                let block_x = u32::from_be_bytes(x_bytes) as usize;
+                let mut y_bytes = [0u8; 4];
+                hex::decode_to_slice(&key_xy[8..16], &mut y_bytes)
+                    .expect("error decoding x coord from storage key");
+                let block_y = u32::from_be_bytes(y_bytes) as usize;
 
-    pub async fn paint_one(&mut self) {
-        self.set_state().await;
+                println!("x: {block_x}, y: {block_y}, value: {value}");
 
-        let mut buffer = self.interactor.homogenous_call_buffer();
-        for contract_info in &self.state.contract_info_list {
-            let gas = match contract_info.block_size {
-                64 => 25_000_000,
-                32 => 7_000_000,
-                _ => 5_000_000,
-            };
-            // let gas = 3_000_000;
-            buffer.push_tx(|tx| {
-                tx.from(&self.owner_address)
-                    .to(&contract_info.address)
-                    .typed(paint_proxy::PaintTheMoonScProxy)
-                    .paint(100u32, 100u32, 2)
-                    .gas(gas)
-                    .returns(PassValue(contract_info.clone()))
-                    .returns(ReturnsGasUsed)
-            });
-        }
+                let block_bytes =
+                    hex::decode(&value).expect("could not hex-decode storage value for block");
 
-        let result = buffer.run().await;
-        for (contract_info, gas_used) in result {
-            println!(
-                "block size {:2} paint 1 gas used {:8}",
-                contract_info.block_size, gas_used
-            );
-        }
-    }
-
-    pub async fn paint_all(&mut self) {
-        self.set_state().await;
-
-        let mut gas_report_raw = std::fs::File::create("gas-report-raw.csv").unwrap();
-        let mut gas_report_group = std::fs::File::create("gas-report-group.csv").unwrap();
-
-        const STEP: usize = 16;
-        let max_x: usize = 1024;
-        let max_y: usize = 512;
-
-        let start_time = std::time::Instant::now();
-
-        for x in 0..max_x {
-            let mut current_y = 0;
-            let mut next_y = 0;
-            while next_y < max_y {
-                next_y += STEP;
-
-                let current_batch_time = std::time::Instant::now();
-
-                print!("points:");
-                let mut buffer = self.interactor.homogenous_call_buffer();
-                for y in current_y..next_y {
-                    for contract_info in self.state.contract_info_list.iter() {
-                        buffer.push_tx(|tx| {
-                            tx.from(&self.owner_address)
-                                .to(&contract_info.address)
-                                .typed(paint_proxy::PaintTheMoonScProxy)
-                                .paint(x, y, 2)
-                                .gas(8_000_000)
-                                .returns(PassValue(x))
-                                .returns(PassValue(y))
-                                .returns(PassValue(contract_info.block_size))
-                                .returns(ReturnsHandledOrError::new().returns(ReturnsGasUsed))
-                        });
-                    }
-                    print!(" ({x}, {y})");
-                }
-                println!();
-
-                let result = buffer.run().await;
-
-                let mut buffer = HashMap::<String, BTreeMap<usize, u64>>::new();
-                for (x, y, block_size, gas_result) in result {
-                    let gas_used = gas_result.unwrap_or_default();
-                    writeln!(gas_report_raw, "{x},{y},{block_size},{gas_used}",).unwrap();
-
-                    let x_y_label = format!("\"({x}, {y})\"");
-                    let line = buffer.entry(x_y_label.clone()).or_default();
-                    line.insert(block_size, gas_used);
-                    if line.len() == BLOCK_SIZES.len() {
-                        write!(gas_report_group, "{x_y_label}").unwrap();
-                        for block_size in BLOCK_SIZES {
-                            write!(gas_report_group, ",{}", line[block_size]).unwrap();
-                        }
-                        writeln!(gas_report_group).unwrap();
+                let block = PixelBlock::<PixelBlockData8>::from_bytes(&block_bytes);
+                for x in 0..8 {
+                    for y in 0..8 {
+                        let raw_pixel = block.get_raw_pixel(x, y);
+                        map[block_x * 8 + x][block_y * 8 + y] =
+                            MoonColor::try_new(raw_pixel).expect("bad pixel");
                     }
                 }
-
-                println!("Elapsed from start: {:?}", start_time.elapsed());
-                println!("Elapsed for batch:  {:?}", current_batch_time.elapsed());
-                current_y = next_y;
             }
         }
+
+        // self.current_map = Some(map);
+        Box::new(map)
     }
 
-    pub async fn paint_rand(&mut self) {
-        self.set_state().await;
+    pub async fn refresh_map(&mut self) {
+        let map = self.retrieve_map().await;
+        self.current_map = Some(map);
+    }
 
-        let mut rand_report_raw = OpenOptions::new()
-            .write(true)
-            .append(true)
-            .create(true)
-            .open("rand-report-raw.csv")
-            .unwrap();
-        let mut rand_report_group = OpenOptions::new()
-            .write(true)
-            .append(true)
-            .create(true)
-            .open("rand-report-group.csv")
-            .unwrap();
+    pub async fn get_map(&mut self) -> Box<Map> {
+        if let Some(map) = &self.current_map {
+            map.clone()
+        } else {
+            let map = self.retrieve_map().await;
+            self.current_map = Some(map.clone());
+            map
+        }
+    }
 
-        const STEP: usize = 16;
-        let max_x: usize = 1024;
-        let max_y: usize = 512;
+    pub async fn render(&mut self) {
+        self.render_map().await.expect("could not render map");
+    }
 
-        let start_time = std::time::Instant::now();
-        let mut rng = rand::thread_rng();
+    pub async fn render_map(&mut self) -> anyhow::Result<()> {
+        let map = self.retrieve_map().await;
 
-        for i in 0..usize::MAX {
-            let current_batch_time = std::time::Instant::now();
+        let image = ImageReader::open("lroc_color_poles_2k.tif")?.decode()?;
+        let mut image = image.resize(1024, 512, image::imageops::FilterType::Nearest);
+
+        for x in 0..1024 {
+            for y in 0..512 {
+                let map_color = map[x][y];
+                if !map_color.is_transparent() {
+                    image.put_pixel(x as u32, y as u32, map_color.rgba_array().into());
+                }
+            }
+        }
+
+        image.save("rendered_flat.png")?;
+
+        Ok(())
+    }
+
+    pub async fn paint_image(&mut self) {
+        let changed_points = self.compose_image().await.expect("failed to compose image");
+
+        let mut total_gas_used = 0;
+
+        for (batch_index, window) in changed_points.chunks(100).enumerate() {
+            println!(
+                "Starting batch of points #{batch_index}, {} points ...",
+                window.len()
+            );
 
             let mut buffer = self.interactor.homogenous_call_buffer();
-            for _ in 0..STEP {
-                let x = rng.gen_range(0..max_x);
-                let y = rng.gen_range(0..max_y);
-
-                for contract_info in self.state.contract_info_list.iter() {
-                    buffer.push_tx(|tx| {
-                        tx.from(&self.owner_address)
-                            .to(&contract_info.address)
-                            .typed(paint_proxy::PaintTheMoonScProxy)
-                            .paint(x, y, rng.gen_range(0..16u8))
-                            .gas(8_000_000)
-                            .returns(PassValue(x))
-                            .returns(PassValue(y))
-                            .returns(PassValue(contract_info.block_size))
-                            .returns(ReturnsHandledOrError::new().returns(ReturnsGasUsed))
-                    });
-                }
+            for point in window {
+                buffer.push_tx(|tx| {
+                    tx.from(&self.owner_address)
+                        .to(&self.config.moon_address)
+                        .typed(paint_proxy::PaintTheMoonScProxy)
+                        .paint(point.x, point.y, point.color.as_byte())
+                        .gas(3_000_000)
+                        .returns(ReturnsGasUsed)
+                });
             }
 
             let result = buffer.run().await;
+            let batch_gas: u64 = result.iter().sum();
+            let batch_avg = batch_gas / window.len() as u64;
 
-            let mut buffer = HashMap::<String, BTreeMap<usize, u64>>::new();
-            for (x, y, block_size, gas_result) in result {
-                let gas_used = gas_result.unwrap_or_default();
-                writeln!(rand_report_raw, "{x},{y},{block_size},{gas_used}",).unwrap();
+            total_gas_used += batch_gas;
 
-                let x_y_label = format!("\"({x}, {y})\"");
-                let line = buffer.entry(x_y_label.clone()).or_default();
-                line.insert(block_size, gas_used);
-                if line.len() == BLOCK_SIZES.len() {
-                    write!(rand_report_group, "{x_y_label}").unwrap();
-                    for block_size in BLOCK_SIZES {
-                        write!(rand_report_group, ",{}", line[block_size]).unwrap();
-                    }
-                    writeln!(rand_report_group).unwrap();
-                }
-            }
-
-            println!("#{i} Elapsed from start: {:?}", start_time.elapsed());
-            println!(
-                "#{i} Elapsed for batch:  {:?}",
-                current_batch_time.elapsed()
-            );
-        }
-    }
-
-    pub async fn paint_rectangles(&mut self) {
-        self.set_state().await;
-
-        let mut rect_report_raw = std::fs::File::create("rect-report-raw.csv").unwrap();
-
-        const STEP: usize = 16;
-        let max_x: usize = 1024;
-        let max_y: usize = 512;
-
-        let start_time = std::time::Instant::now();
-
-        let mut current_x = 0;
-        let mut next_x = 0;
-        while next_x < max_x {
-            next_x += STEP;
-
-            let mut current_y = 0;
-            let mut next_y = 0;
-            while next_y < max_y {
-                next_y += STEP;
-
-                let current_batch_time = std::time::Instant::now();
-
-                print!("points:");
-                let mut buffer = self.interactor.homogenous_call_buffer();
-                for contract_info in self.state.contract_info_list.iter() {
-                    buffer.push_tx(|tx| {
-                        tx.from(&self.owner_address)
-                            .to(&contract_info.address)
-                            .typed(paint_proxy::PaintTheMoonScProxy)
-                            .paint_rect(current_x, current_y, next_x, next_y, 5)
-                            .gas(100_000_000)
-                            .returns(PassValue(current_x))
-                            .returns(PassValue(next_x))
-                            .returns(PassValue(current_y))
-                            .returns(PassValue(next_y))
-                            .returns(PassValue(contract_info.block_size))
-                            .returns(ReturnsHandledOrError::new().returns(ReturnsGasUsed))
-                    });
-                }
-                print!(" ({current_x} .. {next_x}, {current_y} .. {next_y})");
-                println!();
-
-                let result = buffer.run().await;
-
-                for (current_x, next_x, current_y, next_y, block_size, gas_result) in result {
-                    let gas_used = gas_result.unwrap_or_default();
-
-                    let x_y_label =
-                        format!("\"({current_x}, {current_y}) -> ({next_x}, {next_y})\"");
-                    writeln!(rect_report_raw, "{x_y_label},{block_size},{gas_used}",).unwrap();
-                }
-
-                println!("Elapsed from start: {:?}", start_time.elapsed());
-                println!("Elapsed for batch:  {:?}", current_batch_time.elapsed());
-                current_y = next_y;
-            }
-
-            current_x = next_x;
+            println!("Finished batch of points");
+            println!("Batch gas:        {batch_gas}");
+            println!("Batch avg gas/tx: {batch_avg}");
+            println!("Cumulated gas:    {total_gas_used}");
         }
     }
 }

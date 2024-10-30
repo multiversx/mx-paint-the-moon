@@ -15,11 +15,10 @@ members = [
     "paint-the-moon-sc",
     "paint-the-moon-sc/meta",
 
-    "moon-render-yew",
-
-    "microservice",
+    # "moon-render-yew",
+    # "microservice",
 
     "tools/img-processing",
     # "tools/moon-plotter",
-    "tools/sphere",
+    "tools/sphere", "moon-color",
 ]

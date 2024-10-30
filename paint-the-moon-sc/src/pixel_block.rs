@@ -106,6 +106,12 @@ impl<Data: PixelBlockData> PixelBlock<Data> {
         let _ = buffer.load_slice(0, block.data.raw_data_mut());
         block
     }
+
+    pub fn from_bytes(bytes: &[u8]) -> Self {
+        let mut result = Self::default();
+        result.data.raw_data_mut().copy_from_slice(bytes);
+        result
+    }
 }
 
 fn get_first_pixel(double_pixel: u8) -> u8 {

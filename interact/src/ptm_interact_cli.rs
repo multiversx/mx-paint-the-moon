@@ -16,16 +16,12 @@ pub enum InteractCliCommand {
     Deploy,
     #[command(name = "upgrade", about = "Upgrade contracts")]
     Upgrade,
-    #[command(name = "sizes", about = "Print pixel block sizes")]
-    Sizes,
+    #[command(name = "render", about = "Render the current moon to file")]
+    Render,
     #[command(name = "paint", about = "Paint!")]
     Paint(PaintArgs),
-    #[command(name = "paint-all", about = "Paint every pixel")]
-    PaintAll,
-    #[command(name = "paint-rect", about = "Paint rectangle by rectangle")]
-    PaintRectangles,
-    #[command(name = "paint-rand", about = "Paint random points")]
-    PaintRand,
+    #[command(name = "paint-img", about = "Paint image")]
+    PaintImg,
 }
 
 #[derive(Default, Clone, PartialEq, Eq, Debug, Args)]

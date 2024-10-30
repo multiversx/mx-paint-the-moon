@@ -8,18 +8,9 @@ use std::{
 /// State file
 const STATE_FILE: &str = "state.toml";
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ContractInfo {
-    pub block_size: usize,
-    pub address: Bech32Address,
-}
-
 /// Multisig Interact state
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct State {
-    #[serde(default)]
-    pub contract_info_list: Vec<ContractInfo>,
-}
+pub struct State {}
 
 impl State {
     // Deserializes state from file
