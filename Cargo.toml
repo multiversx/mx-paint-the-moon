@@ -5,7 +5,11 @@ members = [
     "common",
     "common-wasm",
     "common-non-wasm",
-    "interact-gas",
+    "moon-color",
+    "sphere",
+
+    "benchmark-gas",
+    "interact",
 
     "paint-harvest-sc",
     "paint-harvest-sc/meta",
@@ -13,11 +17,9 @@ members = [
     "paint-the-moon-sc",
     "paint-the-moon-sc/meta",
 
-    "moon-render-yew",
-
-    "microservice",
+    # "moon-render-yew",
+    # "microservice",
 
     "tools/img-processing",
     # "tools/moon-plotter",
-    "tools/sphere",
 ]

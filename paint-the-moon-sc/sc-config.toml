@@ -33,3 +33,7 @@ features = ["block-size-32"]
 
 [[proxy]]
 path = "src/paint_proxy.rs"
+
+[[proxy]]
+path = "../benchmark-gas/src/moon_proxy.rs"
+add-labels = ["block-benchmark"]

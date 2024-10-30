@@ -6,6 +6,7 @@ use std::io::{Cursor, Write};
 use std::{f32::consts::PI, fs::File};
 
 use image::{ColorType, DynamicImage, GenericImage, GenericImageView, ImageReader, Rgba};
+use moon_color::MoonColor;
 
 const MOON_SOURCE_EMBEDDED: &[u8] = include_bytes!("../lroc_color_poles_1k.jpg");
 
@@ -71,7 +72,16 @@ fn moon_overlay() -> anyhow::Result<DynamicImage> {
         if color_is_solid(color)
         /*&& !color_is_black(color)*/
         {
-            overlay.put_pixel(x0 + x, y0 + y, color);
+            let normalized_color =
+                MoonColor::closest_color_euclidian(color.0[0], color.0[1], color.0[2]);
+            // if !color_is_black(color) {
+            //     let rbg = normalized_color.rgb();
+            //     println!(
+            //         "{} {} {} -> {} {} {}",
+            //         color.0[0], color.0[1], color.0[2], rbg.0, rbg.1, rbg.2
+            //     );
+            // }
+            overlay.put_pixel(x0 + x, y0 + y, normalized_color.rgba_array().into());
         }
     }
 
@@ -82,7 +92,8 @@ fn moon_overlay() -> anyhow::Result<DynamicImage> {
     let y0 = 250;
     for (x, y, color) in paint_here.pixels() {
         if color_is_black(color) {
-            overlay.put_pixel(x0 + x, y0 + y, [180, 0, 210, 255u8].into());
+            // overlay.put_pixel(x0 + x, y0 + y, [180, 0, 210, 255u8].into());
+            overlay.put_pixel(x0 + x, y0 + y, MoonColor::PURPLE.rgba_array().into());
         }
     }
 

@@ -1,6 +1,7 @@
 mod gas_interact_cli;
 mod gas_interact_config;
 mod gas_interact_state;
+mod moon_proxy;
 
 use std::{
     collections::{BTreeMap, HashMap},
@@ -12,7 +13,6 @@ pub use gas_interact_config::Config;
 use gas_interact_state::ContractInfo;
 use gas_interact_state::State;
 use multiversx_sc_snippets::imports::*;
-use paint_the_moon_sc::paint_proxy;
 use rand::Rng;
 use std::io::Write;
 
@@ -89,13 +89,12 @@ impl AdderInteract {
         let mut buffer = self.interactor.homogenous_call_buffer();
         for block_size in BLOCK_SIZES {
             println!("block size {block_size:2} deploying ....");
-            let code_path =
-                format!("../paint-the-moon-sc/output/block-{block_size}.mxsc.json");
+            let code_path = format!("../paint-the-moon-sc/output/block-{block_size}.mxsc.json");
 
             buffer.push_tx(|tx| {
                 tx.from(&self.owner_address)
-                    .typed(paint_proxy::PaintTheMoonScProxy)
-                    .init(MultiValueEncoded::new())
+                    .typed(moon_proxy::PaintTheMoonScProxy)
+                    .init()
                     .code(MxscPath::new(&code_path))
                     .gas(10_000_000)
                     .returns(ReturnsNewBech32Address)
@@ -129,7 +128,7 @@ impl AdderInteract {
             buffer.push_tx(|tx| {
                 tx.from(&self.owner_address)
                     .to(&contract_info.address)
-                    .typed(paint_proxy::PaintTheMoonScProxy)
+                    .typed(moon_proxy::PaintTheMoonScProxy)
                     .upgrade()
                     .code(MxscPath::new(&code_path))
                     .gas(10_000_000)
@@ -145,7 +144,7 @@ impl AdderInteract {
                 .interactor
                 .query()
                 .to(&contract_info.address)
-                .typed(paint_proxy::PaintTheMoonScProxy)
+                .typed(moon_proxy::PaintTheMoonScProxy)
                 .block_size()
                 .returns(ReturnsResult)
                 .run()
@@ -172,7 +171,7 @@ impl AdderInteract {
             buffer.push_tx(|tx| {
                 tx.from(&self.owner_address)
                     .to(&contract_info.address)
-                    .typed(paint_proxy::PaintTheMoonScProxy)
+                    .typed(moon_proxy::PaintTheMoonScProxy)
                     .paint(100u32, 100u32, 2)
                     .gas(gas)
                     .returns(PassValue(contract_info.clone()))
@@ -216,7 +215,7 @@ impl AdderInteract {
                         buffer.push_tx(|tx| {
                             tx.from(&self.owner_address)
                                 .to(&contract_info.address)
-                                .typed(paint_proxy::PaintTheMoonScProxy)
+                                .typed(moon_proxy::PaintTheMoonScProxy)
                                 .paint(x, y, 2)
                                 .gas(8_000_000)
                                 .returns(PassValue(x))
@@ -290,7 +289,7 @@ impl AdderInteract {
                     buffer.push_tx(|tx| {
                         tx.from(&self.owner_address)
                             .to(&contract_info.address)
-                            .typed(paint_proxy::PaintTheMoonScProxy)
+                            .typed(moon_proxy::PaintTheMoonScProxy)
                             .paint(x, y, rng.gen_range(0..16u8))
                             .gas(8_000_000)
                             .returns(PassValue(x))
@@ -357,7 +356,7 @@ impl AdderInteract {
                     buffer.push_tx(|tx| {
                         tx.from(&self.owner_address)
                             .to(&contract_info.address)
-                            .typed(paint_proxy::PaintTheMoonScProxy)
+                            .typed(moon_proxy::PaintTheMoonScProxy)
                             .paint_rect(current_x, current_y, next_x, next_y, 5)
                             .gas(100_000_000)
                             .returns(PassValue(current_x))
