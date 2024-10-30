@@ -31,3 +31,6 @@ rev = "d37a5bf2ff061da8cd087ede1bad3f5cf75800a9"
 [dependencies.moon-color]
 path = "../moon-color"
 
+[dependencies.sphere]
+path = "../sphere"
+

@@ -1,5 +1,7 @@
+use std::convert::Infallible;
+
 use anyhow::anyhow;
-use image::{DynamicImage, GenericImageView, ImageReader, Rgba};
+use image::{ColorType, DynamicImage, GenericImage, GenericImageView, ImageReader, Rgba};
 use moon_color::MoonColor;
 
 use crate::{Map, MoonInteract, Point};
@@ -9,9 +11,9 @@ impl MoonInteract {
         let map = self.get_map().await;
 
         let image = ImageReader::open("egld-logo.png")?.decode()?;
-        println!("egld logo: {} x {}", image.width(), image.height());
+        println!("image size: {} x {}", image.width(), image.height());
         let egld_logo = image.resize(100, 100, image::imageops::FilterType::Nearest);
-        println!("egld logo: {} x {}", egld_logo.width(), egld_logo.height());
+        println!("resized:    {} x {}", egld_logo.width(), egld_logo.height());
 
         let changed_points = add_overlay(&egld_logo, 512, 128, &map).await?;
 
@@ -58,4 +60,17 @@ pub async fn add_overlay(
     }
 
     Ok(changed_points)
+}
+
+pub fn save_sphere(size: u32, long0: f32, source: &DynamicImage, file_name: &str) -> anyhow::Result<()> {
+    let mut rendered = DynamicImage::new(size, size, ColorType::Rgb8);
+
+    let _ = sphere::render_sphere(size, long0, source, |x, y, r, g, b| {
+        rendered.put_pixel(x, y, [r, g, b, 255u8].into());
+        Result::<(), Infallible>::Ok(())
+    });
+
+    rendered.save(file_name)?;
+
+    Ok(())
 }

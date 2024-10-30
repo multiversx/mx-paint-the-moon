@@ -5,6 +5,8 @@ members = [
     "common",
     "common-wasm",
     "common-non-wasm",
+    "moon-color",
+    "sphere",
 
     "benchmark-gas",
     "interact",
@@ -20,5 +22,4 @@ members = [
 
     "tools/img-processing",
     # "tools/moon-plotter",
-    "tools/sphere", "moon-color",
 ]

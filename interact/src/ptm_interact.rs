@@ -12,6 +12,7 @@ use multiversx_sc_snippets::{imports::*, sdk::gateway::GetAccountStorageRequest}
 use paint_the_moon_sc::pixel_block::PixelBlockData8;
 use paint_the_moon_sc::{paint_proxy, PixelBlock};
 pub use ptm_interact_config::Config;
+use ptm_interact_image::save_sphere;
 use ptm_interact_state::State;
 
 pub type Map = [[MoonColor; 512]; 1024];
@@ -134,7 +135,7 @@ impl MoonInteract {
                     .expect("error decoding x coord from storage key");
                 let block_y = u32::from_be_bytes(y_bytes) as usize;
 
-                println!("x: {block_x}, y: {block_y}, value: {value}");
+                // println!("x: {block_x}, y: {block_y}, value: {value}");
 
                 let block_bytes =
                     hex::decode(&value).expect("could not hex-decode storage value for block");
@@ -188,7 +189,9 @@ impl MoonInteract {
             }
         }
 
-        image.save("rendered_flat.png")?;
+        image.save("from-chain-flat.png")?;
+
+        save_sphere(800, 0.0, &image, "from-chain-sphere.png")?;
 
         Ok(())
     }
@@ -198,7 +201,7 @@ impl MoonInteract {
 
         let mut total_gas_used = 0;
 
-        for (batch_index, window) in changed_points.chunks(100).enumerate() {
+        for (batch_index, window) in changed_points.chunks(50).enumerate() {
             println!(
                 "Starting batch of points #{batch_index}, {} points ...",
                 window.len()
