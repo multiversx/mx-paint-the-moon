@@ -1,6 +1,8 @@
 chain_type = 'simulator'
 gateway_uri = 'http://localhost:8085'
-moon_address = 'erd1qqqqqqqqqqqqqpgqj9uy4yg3fu67362rmth3ylgd5km8fej3wadsm4fvtk'
+# moon_address = 'erd1qqqqqqqqqqqqqpgqj9uy4yg3fu67362rmth3ylgd5km8fej3wadsm4fvtk'
+moon_address = 'erd1qqqqqqqqqqqqqpgq8zgudcmu5fskkppdvyfzstnxnqnrkqkxwadsv82t25'
+
 
 # chain_type = 'real'
 # gateway_uri = 'https://devnet-gateway.multiversx.com'

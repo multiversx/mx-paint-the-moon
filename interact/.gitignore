@@ -3,6 +3,8 @@
 *.json
 !paint-owner.pem
 
+from-chain*
+
 # Temporary storage of deployed contract address, so we can preserve the context between executions.
 state.toml
 

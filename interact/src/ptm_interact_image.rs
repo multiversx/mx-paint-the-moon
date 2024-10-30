@@ -13,7 +13,7 @@ impl MoonInteract {
         let egld_logo = image.resize(100, 100, image::imageops::FilterType::Nearest);
         println!("egld logo: {} x {}", egld_logo.width(), egld_logo.height());
 
-        let changed_points = add_overlay(&egld_logo, 512, 256, &map).await?;
+        let changed_points = add_overlay(&egld_logo, 512, 128, &map).await?;
 
         println!("points to change: {}", changed_points.len());
 
