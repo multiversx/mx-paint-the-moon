@@ -1,4 +1,4 @@
-use multiversx_sc::derive_imports::*;
+use multiversx_sc::{derive_imports::*, types::TimestampMillis};
 use paint_the_moon_sc::Color;
 
 pub const ISSUE_COST: u64 = 50000000000000000;
@@ -8,5 +8,5 @@ pub const ISSUE_COST: u64 = 50000000000000000;
 pub struct UserInfo {
     pub nft_nonce: u64,
     pub current_harvest_color: Color,
-    pub start_timestamp: u64,
+    pub start_timestamp: TimestampMillis,
 }

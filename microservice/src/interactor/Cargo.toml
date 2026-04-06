@@ -1,7 +1,7 @@
 [package]
 name = "interactor"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [lib]
 path = "lib.rs"
@@ -9,4 +9,5 @@ path = "lib.rs"
 [dependencies]
 common = { path = "../../../common" }
 common-non-wasm = { path = "../../../common-non-wasm" }
-multiversx-sc-snippets = { git = "https://github.com/multiversx/mx-sdk-rs/", rev = "d37a5bf2ff061da8cd087ede1bad3f5cf75800a9" }
+[dependencies.multiversx-sc-snippets]
+version = "0.65.1"

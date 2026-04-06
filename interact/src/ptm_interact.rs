@@ -10,7 +10,7 @@ use moon_color::MoonColor;
 use multiversx_sc_snippets::sdk::gateway::GatewayAsyncService;
 use multiversx_sc_snippets::{imports::*, sdk::gateway::GetAccountStorageRequest};
 use paint_the_moon_sc::pixel_block::PixelBlockData8;
-use paint_the_moon_sc::{paint_proxy, PixelBlock};
+use paint_the_moon_sc::{PixelBlock, paint_proxy};
 pub use ptm_interact_config::Config;
 use ptm_interact_image::save_sphere;
 use ptm_interact_state::State;
@@ -58,8 +58,9 @@ pub struct MoonInteract {
 
 impl MoonInteract {
     pub async fn init(config: Config) -> Self {
-        let mut interactor =
-            Interactor::new(config.gateway_uri(), config.use_chain_simulator()).await;
+        let mut interactor = Interactor::new(config.gateway_uri())
+            .await
+            .use_chain_simulator(config.use_chain_simulator());
 
         let owner_address = interactor
             .register_wallet(Wallet::from_pem_file("paint-owner.pem").unwrap())
@@ -109,7 +110,7 @@ impl MoonInteract {
             .interactor
             .proxy
             .request(GetAccountStorageRequest::new(
-                &self.config.moon_address.clone().into_address(),
+                &self.config.moon_address.clone(),
             ))
             .await
             .unwrap_or_else(move |err| {

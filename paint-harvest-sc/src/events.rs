@@ -1,3 +1,4 @@
+use multiversx_sc::imports::*;
 use paint_the_moon_sc::Color;
 
 #[multiversx_sc::module]
@@ -18,7 +19,7 @@ pub trait EventsModule {
         &self,
         #[indexed] user: &ManagedAddress,
         #[indexed] nft_nonce: u64,
-        #[indexed] start_timestamp: u64,
+        #[indexed] start_timestamp: TimestampMillis,
         #[indexed] starting_color: &Color,
     );
 
@@ -27,6 +28,6 @@ pub trait EventsModule {
         &self,
         #[indexed] user: &ManagedAddress,
         #[indexed] nft_nonce: u64,
-        #[indexed] end_timestamp: u64,
+        #[indexed] end_timestamp: TimestampMillis,
     );
 }

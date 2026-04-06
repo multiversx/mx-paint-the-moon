@@ -25,7 +25,7 @@ pub trait StorageModule {
 
     // how much time it takes to produce one unit of a specific color
     #[storage_mapper("harvestDuration")]
-    fn harvest_duration(&self, color: &Color) -> SingleValueMapper<u64>;
+    fn harvest_duration(&self, color: &Color) -> SingleValueMapper<DurationMillis>;
 
     #[storage_mapper("accumulatedResources")]
     fn accumulated_resources(&self, color: &Color, user: &ManagedAddress)

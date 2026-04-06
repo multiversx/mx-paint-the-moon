@@ -52,7 +52,7 @@ pub trait PaintHarvestSc:
 
         // start harvest for the color
         // fill storage info
-        let now = self.blockchain().get_block_timestamp();
+        let now = self.blockchain().get_block_timestamp_millis();
         let user_info = UserInfo {
             nft_nonce: payment.token_nonce,
             current_harvest_color: color,
@@ -77,7 +77,7 @@ pub trait PaintHarvestSc:
         );
 
         // mint new paint according to rewards + accumulated rewards
-        let now = self.blockchain().get_block_timestamp();
+        let now = self.blockchain().get_block_timestamp_millis();
         // let user_info = self.user_info(&caller).get();
         self.refresh_accumulated_rewards(&caller, now);
 
@@ -102,7 +102,7 @@ pub trait PaintHarvestSc:
 
         // send rewards
         require!(!all_rewards.is_empty(), "Nothing to claim");
-        self.tx().to(&caller).multi_esdt(all_rewards).transfer();
+        self.tx().to(&caller).payment(all_rewards).transfer();
 
         // cleanup storage
         self.colors_harvested(&caller).clear();
@@ -121,7 +121,7 @@ pub trait PaintHarvestSc:
         );
 
         // refresh accumulated rewards
-        let now = self.blockchain().get_block_timestamp();
+        let now = self.blockchain().get_block_timestamp_millis();
         let user_info = self.user_info(&caller).get();
         self.refresh_accumulated_rewards(&caller, now);
 
@@ -147,7 +147,7 @@ pub trait PaintHarvestSc:
         require!(!self.user_info(&caller).is_empty(), "User not registered");
 
         // refresh accumulated rewards
-        let now = self.blockchain().get_block_timestamp();
+        let now = self.blockchain().get_block_timestamp_millis();
         let user_info = self.user_info(&caller).get();
         self.refresh_accumulated_rewards(&caller, now);
 
@@ -171,7 +171,7 @@ pub trait PaintHarvestSc:
         }
 
         if !all_rewards.is_empty() {
-            self.tx().to(&caller).multi_esdt(all_rewards).transfer();
+            self.tx().to(&caller).payment(all_rewards).transfer();
         }
 
         // send back nft
