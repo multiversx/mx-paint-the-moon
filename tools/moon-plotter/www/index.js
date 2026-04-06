@@ -33,9 +33,18 @@ function setupUI() {
     status.innerText = "WebAssembly loaded!";
     plotType.addEventListener("change", updatePlot);
 	pitch.addEventListener("change", updatePlot);
-	pitch.addEventListener("input", updatePlot);
+	pitch.addEventListener("input", scheduleUpdatePlot);
     window.addEventListener("resize", setupCanvas);
     window.addEventListener("mousemove", onMouseMove);
+}
+
+let _rafId = null;
+function scheduleUpdatePlot() {
+    if (_rafId !== null) return;
+    _rafId = requestAnimationFrame(() => {
+        _rafId = null;
+        updatePlot();
+    });
 }
 
 /** Setup canvas to properly handle high DPI and redraw current plot. */

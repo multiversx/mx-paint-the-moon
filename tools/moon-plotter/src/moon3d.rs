@@ -1,34 +1,47 @@
 use crate::DrawResult;
 use image::{DynamicImage, ImageReader};
-use plotters::prelude::*;
-use plotters_canvas::CanvasBackend;
-use std::{cmp::min, io::Cursor};
-use web_sys::HtmlCanvasElement;
+use std::{io::Cursor, sync::OnceLock};
+use wasm_bindgen::{Clamped, JsCast};
+use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, ImageData};
 
 const MOON_SOURCE_EMBEDDED: &[u8] = include_bytes!("../lroc_color_poles_1k.jpg");
 
-pub fn moon_source() -> anyhow::Result<DynamicImage> {
-    let source =
-        ImageReader::with_format(Cursor::new(MOON_SOURCE_EMBEDDED), image::ImageFormat::Jpeg)
-            .decode()?;
+static MOON_SOURCE: OnceLock<DynamicImage> = OnceLock::new();
 
-    Ok(source)
+fn moon_source() -> &'static DynamicImage {
+    MOON_SOURCE.get_or_init(|| {
+        ImageReader::with_format(Cursor::new(MOON_SOURCE_EMBEDDED), image::ImageFormat::Jpeg)
+            .decode()
+            .expect("Failed to decode embedded moon image")
+    })
 }
 
 pub fn draw(canvas: HtmlCanvasElement, long0: f64) -> DrawResult<()> {
-    let area = CanvasBackend::with_canvas_object(canvas)
-        .unwrap()
-        .into_drawing_area();
-    let (width, height) = area.dim_in_pixel();
-    let size = min(width, height);
+    let size = canvas.width().min(canvas.height());
 
-    area.fill(&BLACK)?;
-
-    let source = moon_source()?;
-
-    sphere::render_sphere(size, -long0 as f32, &source, |x, y, r, g, b| {
-        area.draw_pixel((x as i32, y as i32), &RGBColor(r, g, b))
+    // Render all pixels into an RGBA buffer entirely within WASM — no per-pixel JS calls.
+    let mut buf = vec![0u8; (size * size * 4) as usize];
+    sphere::render_sphere(size, -long0 as f32, moon_source(), |x, y, r, g, b| {
+        let idx = ((y * size + x) * 4) as usize;
+        buf[idx]     = r;
+        buf[idx + 1] = g;
+        buf[idx + 2] = b;
+        buf[idx + 3] = 255;
+        Ok::<_, Box<dyn std::error::Error>>(())
     })?;
+
+    // Push the whole buffer to the canvas in a single JS call.
+    let image_data =
+        ImageData::new_with_u8_clamped_array_and_sh(Clamped(&buf), size, size)
+            .map_err(|e| format!("{e:?}"))?;
+    let ctx = canvas
+        .get_context("2d")
+        .map_err(|e| format!("{e:?}"))?
+        .unwrap()
+        .dyn_into::<CanvasRenderingContext2d>()
+        .map_err(|_| "expected CanvasRenderingContext2d")?;
+    ctx.put_image_data(&image_data, 0.0, 0.0)
+        .map_err(|e| format!("{e:?}"))?;
 
     Ok(())
 }
