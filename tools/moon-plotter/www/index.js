@@ -42,7 +42,7 @@ function setupUI() {
 function setupCanvas() {
 	const dpr = window.devicePixelRatio || 1.0;
     const aspectRatio = canvas.width / canvas.height;
-    const size = canvas.parentNode.offsetWidth * 0.8;
+    const size = canvas.parentNode.offsetWidth * 0.5;
     canvas.style.width = size + "px";
     canvas.style.height = size / aspectRatio + "px";
     canvas.width = size;
