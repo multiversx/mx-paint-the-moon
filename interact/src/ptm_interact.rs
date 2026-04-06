@@ -139,7 +139,7 @@ impl MoonInteract {
                 // println!("x: {block_x}, y: {block_y}, value: {value}");
 
                 let block_bytes =
-                    hex::decode(&value).expect("could not hex-decode storage value for block");
+                    hex::decode(value).expect("could not hex-decode storage value for block");
 
                 let block = PixelBlock::<PixelBlockData8>::from_bytes(&block_bytes);
                 for x in 0..8 {

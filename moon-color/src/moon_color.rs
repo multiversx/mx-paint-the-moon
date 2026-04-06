@@ -88,7 +88,7 @@ impl MoonColor {
     }
 
     pub fn all_colors_iter() -> impl Iterator<Item = MoonColor> {
-        (0..15).map(|i| MoonColor(i))
+        (0..15).map(MoonColor)
     }
 }
 

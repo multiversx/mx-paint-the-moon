@@ -1,5 +1,5 @@
-use crate::custom_callbacks::{CallbackProxy, CustomCallbacks};
 use crate::ISSUE_COST;
+use crate::custom_callbacks::{CallbackProxy, CustomCallbacks};
 use paint_the_moon_sc::Color;
 
 use multiversx_sc::imports::*;

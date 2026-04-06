@@ -29,5 +29,5 @@ pub trait StorageModule {
 
     #[storage_mapper("accumulatedResources")]
     fn accumulated_resources(&self, color: &Color, user: &ManagedAddress)
-        -> SingleValueMapper<u64>;
+    -> SingleValueMapper<u64>;
 }

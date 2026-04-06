@@ -6,4 +6,4 @@ mod wasm;
 pub use config::{Config, QueryRoutes, Routes};
 pub use data::*;
 pub use proxies::{PaintHarvestScProxy, PaintTheMoonScProxy};
-pub use wasm::{ContractCode, CONTRACT_CODE};
+pub use wasm::{CONTRACT_CODE, ContractCode};

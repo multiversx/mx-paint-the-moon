@@ -103,7 +103,7 @@ impl<Data: PixelBlockData> PixelBlock<Data> {
 
     pub fn from_managed_buffer<Api: ManagedTypeApi>(buffer: &ManagedBuffer<Api>) -> Self {
         let mut block = Self::default();
-        let _ = buffer.load_slice(0, block.data.raw_data_mut());
+        buffer.load_slice(0, block.data.raw_data_mut());
         block
     }
 

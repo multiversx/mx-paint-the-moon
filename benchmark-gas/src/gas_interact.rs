@@ -259,13 +259,11 @@ impl AdderInteract {
         self.set_state().await;
 
         let mut rand_report_raw = OpenOptions::new()
-            .write(true)
             .append(true)
             .create(true)
             .open("rand-report-raw.csv")
             .unwrap();
         let mut rand_report_group = OpenOptions::new()
-            .write(true)
             .append(true)
             .create(true)
             .open("rand-report-group.csv")

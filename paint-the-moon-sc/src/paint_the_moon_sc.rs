@@ -1,7 +1,5 @@
 #![no_std]
 
-use core::usize;
-
 #[allow(unused_imports)]
 use multiversx_sc::imports::*;
 

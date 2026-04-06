@@ -25,7 +25,12 @@ pub trait PrivateModule:
         );
     }
 
-    fn calculate_rewards(&self, color: &Color, start: TimestampMillis, now: TimestampMillis) -> u64 {
+    fn calculate_rewards(
+        &self,
+        color: &Color,
+        start: TimestampMillis,
+        now: TimestampMillis,
+    ) -> u64 {
         let harvest_duration = self.harvest_duration(color).get();
         let time_since_start = now - start;
         time_since_start.as_u64_millis() / harvest_duration.as_u64_millis()
