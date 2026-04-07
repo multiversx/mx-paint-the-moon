@@ -1,6 +1,5 @@
 .vscode/
 **/target/**
 **/output/**
-**/Cargo.lock
 **/dist
 **/rabbit_mq_config.toml

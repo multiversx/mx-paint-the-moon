@@ -54,8 +54,6 @@ where
 
     let source_r = source_mid_y;
 
-    let mut rendered = DynamicImage::new(size, size, ColorType::Rgb8);
-
     for y in 0..=size {
         let latitude = latitude(y, globe_r);
         let source_yd = (latitude / FRAC_PI_2) * source_r;

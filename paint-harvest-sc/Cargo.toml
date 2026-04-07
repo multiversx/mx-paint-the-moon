@@ -2,19 +2,17 @@
 name = "paint-harvest-sc"
 version = "0.0.0"
 authors = ["you"]
-edition = "2021"
+edition = "2024"
 publish = false
 
 [lib]
 path = "src/paint_harvest_sc.rs"
 
 [dependencies.multiversx-sc]
-git = "https://github.com/multiversx/mx-sdk-rs"
-rev = "d37a5bf2ff061da8cd087ede1bad3f5cf75800a9"
+version = "0.65.1"
 
 [dependencies.paint-the-moon-sc]
 path = "../paint-the-moon-sc"
 
 [dev-dependencies.multiversx-sc-scenario]
-git = "https://github.com/multiversx/mx-sdk-rs"
-rev = "d37a5bf2ff061da8cd087ede1bad3f5cf75800a9"
+version = "0.65.1"

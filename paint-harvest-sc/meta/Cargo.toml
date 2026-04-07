@@ -1,12 +1,11 @@
 [package]
 name = "paint-harvest-sc-meta"
 version = "0.0.0"
-edition = "2021"
+edition = "2024"
 publish = false
 
 [dependencies.paint-harvest-sc]
 path = ".."
 
 [dependencies.multiversx-sc-meta-lib]
-git = "https://github.com/multiversx/mx-sdk-rs"
-rev = "d37a5bf2ff061da8cd087ede1bad3f5cf75800a9"
+version = "0.65.1"

@@ -6,7 +6,7 @@ use multiversx_sc::imports::*;
 pub trait PrivateModule:
     crate::storage::StorageModule + crate::owner::OwnerModule + crate::custom_callbacks::CustomCallbacks
 {
-    fn refresh_accumulated_rewards(&self, user: &ManagedAddress, now: u64) {
+    fn refresh_accumulated_rewards(&self, user: &ManagedAddress, now: TimestampMillis) {
         let user_info = self.user_info(user).get();
 
         // calc rewards for now - user_info.start_timestamp for current harvest color
@@ -25,10 +25,15 @@ pub trait PrivateModule:
         );
     }
 
-    fn calculate_rewards(&self, color: &Color, start: u64, now: u64) -> u64 {
+    fn calculate_rewards(
+        &self,
+        color: &Color,
+        start: TimestampMillis,
+        now: TimestampMillis,
+    ) -> u64 {
         let harvest_duration = self.harvest_duration(color).get();
         let time_since_start = now - start;
-        time_since_start / harvest_duration
+        time_since_start.as_u64_millis() / harvest_duration.as_u64_millis()
     }
 
     fn require_contract_open(&self) {

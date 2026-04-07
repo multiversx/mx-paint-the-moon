@@ -2,7 +2,7 @@
 name = "wasm-demo"
 version = "0.1.0"
 authors = ["Hao Hou <haohou302@gmail.com>"]
-edition = "2018"
+edition = "2024"
 
 [lib]
 crate-type=["cdylib"]
@@ -11,7 +11,7 @@ crate-type=["cdylib"]
 plotters = "^0.3.2"
 wasm-bindgen = "0.2.78"
 wee_alloc = "0.4.5"
-web-sys = { version = "0.3.39", features = ["HtmlCanvasElement"] }
+web-sys = { version = "0.3.39", features = ["HtmlCanvasElement", "CanvasRenderingContext2d", "ImageData"] }
 plotters-canvas = "^0.3.0"
 image = { version = "0.25.2", default-features = false, features = ["jpeg"] }
 anyhow = "1.0.89"

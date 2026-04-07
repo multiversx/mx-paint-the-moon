@@ -62,7 +62,12 @@ pub async fn add_overlay(
     Ok(changed_points)
 }
 
-pub fn save_sphere(size: u32, long0: f32, source: &DynamicImage, file_name: &str) -> anyhow::Result<()> {
+pub fn save_sphere(
+    size: u32,
+    long0: f32,
+    source: &DynamicImage,
+    file_name: &str,
+) -> anyhow::Result<()> {
     let mut rendered = DynamicImage::new(size, size, ColorType::Rgb8);
 
     let _ = sphere::render_sphere(size, long0, source, |x, y, r, g, b| {

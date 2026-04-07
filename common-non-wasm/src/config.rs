@@ -1,6 +1,6 @@
 use std::{
     env,
-    fs::{read_to_string, File},
+    fs::{File, read_to_string},
     io::{BufWriter, Error, ErrorKind, Write},
     path::PathBuf,
 };

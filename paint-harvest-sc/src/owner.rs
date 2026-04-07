@@ -1,5 +1,5 @@
-use crate::custom_callbacks::{CallbackProxy, CustomCallbacks};
 use crate::ISSUE_COST;
+use crate::custom_callbacks::{CallbackProxy, CustomCallbacks};
 use paint_the_moon_sc::Color;
 
 use multiversx_sc::imports::*;
@@ -22,7 +22,7 @@ pub trait OwnerModule:
 
     #[only_owner]
     #[endpoint]
-    fn change_color_harvest_duration(&self, color: Color, new_duration: u64) {
+    fn change_color_harvest_duration(&self, color: Color, new_duration: DurationMillis) {
         self.harvest_duration(&color).set(new_duration)
     }
 
@@ -33,9 +33,9 @@ pub trait OwnerModule:
     fn issue_semi_fungible(&self, token_display_name: ManagedBuffer, token_ticker: ManagedBuffer) {
         require!(self.paint_token_id().is_empty(), "Token already issued");
 
-        let payment_amount = self.call_value().egld_value().clone_value();
+        let payment_amount = self.call_value().egld();
         require!(
-            payment_amount == ISSUE_COST,
+            *payment_amount == ISSUE_COST,
             "Issue cost (0,05 egld) should be sent to this endpoint"
         );
 
