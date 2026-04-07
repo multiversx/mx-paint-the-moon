@@ -2,6 +2,13 @@
 // import { Chart } from "wasm-demo" and remove `setup` call from `bootstrap.js`.
 class Chart {}
 
+import { renderSphere, generateChecker, loadImage } from "./moon-js.js";
+
+// Cached JS-side sources (avoids re-decoding on every render).
+const jsCheckerSource = generateChecker(1000, 500);
+let jsMoonSource = null;
+const jsMoonSourceReady = loadImage("lroc_color_poles_1k.jpg").then(src => { jsMoonSource = src; });
+
 const canvas = document.getElementById("canvas");
 const coord = document.getElementById("coord");
 const plotType = document.getElementById("plot-type");
@@ -80,30 +87,52 @@ function onMouseMove(event) {
 function updateMoon3d() {
 	let pitch_value = Number(pitch.value) / 100.0;
 	Chart.moon3d(canvas, pitch_value);
-	coord.innerText = `Pitch:${pitch_value}`
+	coord.innerText = `Pitch:${pitch_value}`;
 }
 
 function updateChecker3d() {
 	let pitch_value = Number(pitch.value) / 100.0;
 	Chart.checker3d(canvas, pitch_value);
-	coord.innerText = `Pitch:${pitch_value}`
+	coord.innerText = `Pitch:${pitch_value}`;
+}
+
+async function updateMoonJs() {
+	if (!jsMoonSource) await jsMoonSourceReady;
+	const pitch_value = Number(pitch.value) / 100.0;
+	const size = Math.min(canvas.width, canvas.height);
+	const buf = renderSphere(size, -pitch_value, jsMoonSource);
+	canvas.getContext("2d").putImageData(new ImageData(buf, size, size), 0, 0);
+	coord.innerText = `Pitch:${pitch_value}`;
+}
+
+function updateCheckerJs() {
+	const pitch_value = Number(pitch.value) / 100.0;
+	const size = Math.min(canvas.width, canvas.height);
+	const buf = renderSphere(size, -pitch_value, jsCheckerSource);
+	canvas.getContext("2d").putImageData(new ImageData(buf, size, size), 0, 0);
+	coord.innerText = `Pitch:${pitch_value}`;
 }
 
 /** Redraw currently selected plot. */
-function updatePlot() {
+async function updatePlot() {
     const selected = plotType.selectedOptions[0];
     status.innerText = `Rendering ${selected.innerText}...`;
     chart = null;
     const start = performance.now();
 	switch(selected.value) {
-		case "moon": 
+		case "moon":
 			updateMoon3d();
 			break;
-		case "checker": 
+		case "checker":
 			updateChecker3d();
 			break;
+		case "moon-js":
+			await updateMoonJs();
+			break;
+		case "checker-js":
+			updateCheckerJs();
+			break;
 	}
-	
     const end = performance.now();
     status.innerText = `Rendered ${selected.innerText} in ${Math.ceil(end - start)}ms`;
 }

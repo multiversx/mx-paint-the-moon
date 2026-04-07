@@ -12,6 +12,9 @@ module.exports = {
     asyncWebAssembly: true,
   },
   plugins: [
-    new CopyWebpackPlugin({ patterns: [{ from: 'index.html' }] }),
+    new CopyWebpackPlugin({ patterns: [
+      { from: 'index.html' },
+      { from: '../lroc_color_poles_1k.jpg' },
+    ]}),
   ],
 };
